@@ -1,6 +1,7 @@
 #define public__ name = 'ejemplodlib'
-#define private__ dlapart = 'librarypart-1'
+#define private__ libpart = 'librarypart-1'
 #define private__ multiuse = 'True'
+#define public__ propietary_program = 'Shared File System'
 
 // Se define el lenguaje de programacion que contiene la libreria
 #define private__ language = 'Python'
@@ -11,8 +12,11 @@ block: 'class_test' ; (
 
 	@[referential : TE] (
 		BEGIN
+		from pdb import set_trace as BREAK
+
 		# Codigo de ejemplo
 		print("Hola mundo, usando una libreria DLA!")
+		BREAK()
 		END
 	)
 
@@ -28,9 +32,9 @@ block: 'class_test' ; (
 		x = True
 		y = [1,2,3,4,5,6,7,8]
 		if x == True:
-		?print("soy un estupido")
-		?for i in y:
-		??print(i)
+		¶print("ESTO POR FIN ESTA FUNCIONA!!")
+		¶for i in y:
+		¶¶print(i)
 		END
 	)
 )

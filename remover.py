@@ -12,7 +12,7 @@ fname = "fCodeCache1.py"
 
 if not os.path.exists(fname):
     tfile = open(fname, "w")
-    tfile.write(" Print('Hola mundo') ")
+    tfile.write(" print('Hola mundo') ")
 
     subprocess.call(["python", fname])
 else:

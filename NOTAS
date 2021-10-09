@@ -1,0 +1,48 @@
+escritura en python -> compilador -> .dla
+
+Estructura:
+
+DinamycLibraries/
+	-> LibsCompiler/
+		-> __init__.py
+		-> DLA.py
+			* read
+				* segment()
+				* block()
+			* write
+				* block()
+				* segment()
+			* headers
+				* set()
+				* get()
+		-> HDLA.py
+		-> _dir_reader.py
+		-> Compile.py
+		-> EncryptX/
+	-> __init__.py
+
+
+** PROTOCOLO EN DESAROLLO **
+Mensaje de protocolo DLAPP
+
+1 caracter -> 1 byte -> 8 bits 
+
+Minusculas 	(0110)
+a 01100001	b 01100010	 c 01100011
+d 01100100	e 01100101	 f 01100110
+
+Mayusculas	(0100)
+A 01000001	B 01000010	 C 01000011
+D 01000100	E 01000101	 F 01000110
+
+Numeros		(0011)
+1 00110001	2 00110010	 3 00110011
+4 00110100	3 00110101	 4 00110110
+
+Simbolos	(0010)
+# 00100011	@ 
+
+
+4 bytes de direccion	->	32		bits
+1 byte de permiso		->	8 		bits
+512 bytes de mensaje 	->	4096	bits
