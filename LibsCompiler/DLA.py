@@ -6,7 +6,7 @@ import sys
 from io import open
 
 # # NOTE: PERFECCIONAR QUE AUTOMATICAMENTE SE CAMBIEN LOS TABS POR '¶'
-# # NOTE: AGREGAR EL SISTEMA DE ENCRIPTACION N-4
+# # NOTE: IMPLEMENTAR EL SISTEMA DE ENCRIPTACION N-X
 
 
 def textReplaceEncode (text):
@@ -21,6 +21,7 @@ def textReplaceEncode (text):
 
 
 class read (object):
+	# # NOTE: Funcion terminada
 	def segment (self, dlatoread, block, referential):
 		#print("SE UBICA CON EXITO")
 		"""Retorna una tupla con el nombre de la libreria y el codigo a ejecutar"""
@@ -49,6 +50,7 @@ class read (object):
 
 				# BUSCA EL SEGMENTO A LEER
 				# @[referential : = 16 caracteres
+				# MODIFICAR METODO DE BUSQUEDA - eliminar limitacion de nombramiento de solo 2 caracteres
 				if wactual_line == "@[referential : {}] (\n".format(referential):
 					#print("REFERENCIAL ENCONTRADOOOOOO")
 					z = num_lines
@@ -120,6 +122,9 @@ class read (object):
 			# ( NOMBRE DE LA LIBRERIA , CODIGO DEL SEGMENTO A EJECUTAR )
 			return dlatoread, final_value
 
+
+
+
 class headers():
 	# HEADERS DEL SISTEMA
 	# * name 		* multiuse
@@ -129,7 +134,8 @@ class headers():
 	# * public__	Para cabeceras de acceso publico
 	# * private__	Para cabeceras de acceso privado
 	
-	
+
+	# # NOTE: Funcion terminada
 	def get(dfile, head_t):
 		"""Obtiene el header indicado"""
 		HEADER_VALUE	= ""
@@ -173,7 +179,7 @@ class headers():
 
 	def set(head_info):
 		"""Graba los datos del header en un dla"""
-		# head_info	-> { privacy : priv , name : value }
+		# head_info	<- { privacy : priv , name : value }
 		# ejemplo:
 		# 	{ "privacy" : "private" , "libpart" : "part-1" }
 

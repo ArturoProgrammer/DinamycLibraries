@@ -72,21 +72,26 @@ def __dir_existent (app_name):
 
 
 
-def debug (libdata):
+
+# # NOTE: Comanzar a trabajar en funcion
+def debug (dla_name):
 	"""Debug de la libreria para detectar errores"""
 	# Retorna:
 	# * True en caso de pasar la prueba con exito
 	# * False en caso de lo contrario
+	print("TRABAJANDO CON: ", dla_name)
+
 	return True
 
 
 
+# # NOTE: Funcion estable / falta terminar
 def run (lib_data):
 	"""Compila y ejecuta la liberia una vez que pasa el Debug"""
-	lib_name	= lib_data[0]
-	lib_content	= lib_data[1]
+	lib_name	= lib_data[0]	# Nombre del archivo de la DLA
+	lib_content	= lib_data[1]	# Codigo a ejecutar
 	f_name		= ""
-	program_lib = headers.get(lib_name, "propietary_program")
+	program_lib = headers.get(lib_name, "propietary_program")	# Programa "Dueño" de la libreria
 
 	root_1	= ".cache/"
 	root_2	= "temp/"
@@ -104,8 +109,8 @@ def run (lib_data):
 		else:
 			os.chdir(root_2)
 
-
-	if debug(lib_data) == True:
+	# Ejecucion
+	if debug(lib_name) == True:
 		print("Debug exitoso")
 
 		# Se extrae el nombre del programa propietario de los headers

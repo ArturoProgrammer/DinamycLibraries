@@ -15,6 +15,5 @@ import file_encoder
 
 file_encoder.init()
 
-if __name__ == '__main__':
-	val = LibsCompiler.DLA.read().segment("ejemplo.dla", "class_test", "TE")
-	LibsCompiler.Compile.run(val)
+val = LibsCompiler.DLA.read().segment("ejemplo.dla", "class_test", "TE")
+LibsCompiler.Compile.run(val)

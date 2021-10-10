@@ -7,17 +7,18 @@ DinamycLibraries/
 		-> __init__.py
 		-> DLA.py
 			* read
-				* segment()
+				* segment() ※
 				* block()
 			* write
 				* block()
 				* segment()
 			* headers
 				* set()
-				* get()
+				* get() ※
 		-> HDLA.py
-		-> _dir_reader.py
 		-> Compile.py
+			* debug()
+			* run()
 		-> EncryptX/
 	-> __init__.py
 
