@@ -10,7 +10,7 @@ block: 'class_test' ; (
 	// Aqui va el segmento de codigo encriptado
 	// El codigo se encripta en N-4
 
-	@[referential : TE] (
+	@[referential : "TE"] (
 		BEGIN
 		from pdb import set_trace as BREAK
 
@@ -20,14 +20,14 @@ block: 'class_test' ; (
 		END
 	)
 
-	@[referential : MT] (
+	@[referential : "Segundo"] (
 		BEGIN
 		x = 2 + 2
 		print(x)
 		END
 	)
 
-	@[referential : OS] (
+	@[referential : "Ultimo"] (
 		BEGIN
 		x = True
 		y = [1,2,3,4,5,6,7,8]
@@ -35,6 +35,17 @@ block: 'class_test' ; (
 		¶print("ESTO POR FIN ESTA FUNCIONA!!")
 		¶for i in y:
 		¶¶print(i)
+		END
+	)
+
+	@[referential : "Windows"] (
+		BEGIN
+		from tkinter import messagebox
+		def alert_emergent (title, msg):
+		¶messagebox.showerror(title, msg)
+
+		if __name__ == '__main__':
+		¶alert_emergent("Mi ventana", "Hola mundo usando una libreria DLA")
 		END
 	)
 )

@@ -10,10 +10,6 @@ from io import open
 
 
 def textReplaceEncode (text):
-	"""
-	? = UNA TABULACION
-	¿ = UN ESPACIO
-	"""
 	string = str(text)
 	text_replace = string.replace("\t", "¶")
 	return text_replace
@@ -26,7 +22,7 @@ class read (object):
 		#print("SE UBICA CON EXITO")
 		"""Retorna una tupla con el nombre de la libreria y el codigo a ejecutar"""
 		# dlatoread 	= archivo a leer
-		# block			= bloque en que se encuentra el codigo	
+		# block			= bloque en que se encuentra el codigo
 		# referential	= referential del codigo
 
 		filetoread = dlatoread
@@ -51,9 +47,9 @@ class read (object):
 				# BUSCA EL SEGMENTO A LEER
 				# @[referential : = 16 caracteres
 				# MODIFICAR METODO DE BUSQUEDA - eliminar limitacion de nombramiento de solo 2 caracteres
-				if wactual_line == "@[referential : {}] (\n".format(referential):
-					#print("REFERENCIAL ENCONTRADOOOOOO")
-					z = num_lines
+				if wactual_line[:13] == "@[referential":
+					if wactual_line[17:-5] == referential:
+						z = num_lines
 				if wactual_line == "BEGIN\n":
 					#print("===INICIO DE LINEA ENCONTRADO===", wactual_line)
 					id_locations.append(num_lines)	# AGREGA COORDENADA
@@ -89,10 +85,16 @@ class read (object):
 
 			parser = []
 
-
 			while x < y:
 				#print(text_lines[x])
-				parser.append(text_lines[x])
+				if str(text_lines[x])[:2] == "Â¶":
+					OBJ_LINE = text_lines[x].replace("Â¶", "\t")
+					parser.append(OBJ_LINE)
+				elif str(text_lines[x])[:1] == "¶":
+					OBJ_LINE = text_lines[x].replace("¶", "\t")
+					parser.append(OBJ_LINE)
+				else:
+					parser.append(text_lines[x])
 				x += 1
 
 			parser.remove("BEGIN\n")	# ELIMINAMOS UN ELEMENTO BASURA DEL PARSER
@@ -133,7 +135,6 @@ class headers():
 	# Estatus:
 	# * public__	Para cabeceras de acceso publico
 	# * private__	Para cabeceras de acceso privado
-	
 
 	# # NOTE: Funcion terminada
 	def get(dfile, head_t):
@@ -143,7 +144,7 @@ class headers():
 
 		f = open(dfile, "r")
 		f_content = f.readlines()
-		
+
 		flines = []
 		for a in f_content:
 			flines.append(a)
@@ -166,13 +167,12 @@ class headers():
 				dead_string.append(i)
 
 			fal_ext = str(" ".join(predead_string[4:]))
-
 			dead_string.append(fal_ext)
 
 			if dead_string[2] == head_t and dead_string[1] == "public__":
 				HEADER_VALUE = dead_string[4]
 				HEADER_VALUE = HEADER_VALUE[1:-1]
-	
+
 		return HEADER_VALUE
 
 

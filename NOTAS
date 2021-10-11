@@ -19,6 +19,8 @@ DinamycLibraries/
 		-> Compile.py
 			* debug()
 			* run()
+		-> SystemAlerts.py
+			* deploy()
 		-> EncryptX/
 	-> __init__.py
 
@@ -26,7 +28,7 @@ DinamycLibraries/
 ** PROTOCOLO EN DESAROLLO **
 Mensaje de protocolo DLAPP
 
-1 caracter -> 1 byte -> 8 bits 
+1 caracter -> 1 byte -> 8 bits
 
 Minusculas 	(0110)
 a 01100001	b 01100010	 c 01100011
@@ -41,9 +43,15 @@ Numeros		(0011)
 4 00110100	3 00110101	 4 00110110
 
 Simbolos	(0010)
-# 00100011	@ 
+# 00100011
 
 
 4 bytes de direccion	->	32		bits
 1 byte de permiso		->	8 		bits
 512 bytes de mensaje 	->	4096	bits
+
+***COMO AÑADIR NUEVAS CABECERAS PRINCIPALES:
+Modificar en archivo Compile.py:
+	- approbed_list
+	- APPROBED_MAINHEADERS
+	- Proceso de comprobacion de existencia
