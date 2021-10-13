@@ -6,11 +6,19 @@
 // Se define el lenguaje de programacion que contiene la libreria
 #define private__ language = 'Python'
 
-block: 'class_test' ; (
+block: 'clase_prueba' ; {
+	@[referential : "SI"] (
+		BEGIN
+		print("Sirve")
+		END
+	)
+}
+
+block: 'class_test' ; {
 	// Aqui va el segmento de codigo encriptado
 	// El codigo se encripta en N-4
 
-	@[referential : "TE"] (
+	@[referential : "Nel"] (
 		BEGIN
 		from pdb import set_trace as BREAK
 
@@ -48,4 +56,4 @@ block: 'class_test' ; (
 		¶alert_emergent("Mi ventana", "Hola mundo usando una libreria DLA")
 		END
 	)
-)
+}

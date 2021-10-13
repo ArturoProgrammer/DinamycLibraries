@@ -27,7 +27,7 @@ class read (object):
 
 		filetoread = dlatoread
 
-		tab_valor		= "¶"
+		tab_valor		= "¶"	# VALOR AL QUE ES EQUIVALENTE UN TAB
 		id_locations 	= []	# GUARDA LAS COORDENADAS DEL CODIGO A USAR
 		text_lines 		= {}	# ALMACENA EL CODIGO CORRESPONDIENTE A CADA LINEA DEL ARCHIVO
 		num_lines 		= 0		# GUARDA LA CANTIDAD DE LINEAS QUE HAY EN EL ARCHIVO
@@ -36,6 +36,7 @@ class read (object):
 		if os.path.exists(filetoread):
 			fileaction = open(filetoread, "r")
 			# ANALIZA EL ARCHIVO PARA ENCONTRAR LOS BEGIN Y END
+			block_on_line = 0
 			for actual_line in fileaction.readlines():
 				wactual_line = actual_line.lstrip()
 
@@ -44,9 +45,17 @@ class read (object):
 				num_lines += 1
 				text_lines[num_lines] = wactual_line # ALMACENAJE DE LINEAS EN EL DICCIONARIO
 
+				# BUSCA EL BLOQUE A LEER
+				if wactual_line[:6] == "block:":
+					#print(wactual_line)
+					if wactual_line[8:-6] == block:
+						#print("BLOQUE {} ENCONTRADO EN {}".format(block, num_lines))
+						block_on_line = num_lines
+				if wactual_line[:1] == "}":
+					#print(wactual_line, "EN LINEA:", num_lines)
+					pass
+
 				# BUSCA EL SEGMENTO A LEER
-				# @[referential : = 16 caracteres
-				# MODIFICAR METODO DE BUSQUEDA - eliminar limitacion de nombramiento de solo 2 caracteres
 				if wactual_line[:13] == "@[referential":
 					if wactual_line[17:-5] == referential:
 						z = num_lines

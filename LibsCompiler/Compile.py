@@ -84,16 +84,19 @@ def debug (dla_name):
 	os.chdir(str(os.getcwd())[:-12])
 	fails_count = 0	# Conteo de errores en el proceso
 
+	# Lista de aprobacion de cabeceras
 	approbed_list = {
 		"main_headers" :False,
 		"headers_parser" : False,
 		"language" : False
 	}
 
+	# Lista de errores que puede retornar el compilador
 	ERRORS_LIST =  {
 		"NameError" : "EL NOMBRE REFERENCIADO NO ES VALIDO",
 		"UnexpectedToken" : "NO SE ESPERABA",
-		"HeaderMissing" : "NO HA SIDO DECLARADA LA CABECERA"
+		"HeaderMissing" : "NO HA SIDO DECLARADA LA CABECERA",
+		"TokenAbsent" : "HACE FALTA EL TOKEN"
 	}
 
 	# Almacenado de lineas
@@ -153,6 +156,63 @@ def debug (dla_name):
 				deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i],arg = dead_string[3], error = "UnexpectedToken", text = ERRORS_LIST["UnexpectedToken"])))
 				fails_count += 1
 
+	# Proceso Dos - revisar los bloques
+	# # NOTE: HACER
+
+	# Proceso Tres - revisar los segmentos
+	TOKENS_LIST	= [
+		"@", "[", "]", "(", ")", "{", "}", ":", ";"
+	]
+	expected_string = ["@", "[", ":", "]", "("]
+
+	for i in DICT_LINES:
+		if str(DICT_LINES[i])[:3] == "@[r":
+			string = str(DICT_LINES[i])[:-1]	# Cadena de linea
+
+			predead_string 	= []	# Lista de cadena pre-muerta
+			dead_string		= []	# Lista de cadena muerta
+			ref_arg 		= ""
+			tokens			= []	# Tokens presentes en la cadena
+
+			predead_string = string.split()
+
+			for a in predead_string:
+				for char in a:
+					if char in expected_string:
+						tokens.append(char)
+
+			# Comprobador de errores en caso de faltar algun token en la linea
+			miss_tkn = ""
+			if len(tokens) != 5:
+
+				# CORREGIR LINEA AL TERMINAR EL dead_string
+				tkns_index		= []
+
+				for a in tokens:
+					for b in expected_string:
+						if a == b:
+							tkns_index.append(expected_string.index(b))
+
+				for ind in tkns_index:
+					#print(tkns_index.index(ind))
+					actual = ind
+					expected = int(ind + 1)
+
+					try:
+						if tkns_index.index(expected) != expected:
+							pass
+						else:
+							pass
+					except ValueError:
+						if expected != 5:
+							miss_tkn = expected_string[expected]
+
+				deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
+				fails_count += 1
+
+			#print(string)
+			#print(predead_string)
+
 	# *** # Aqui va el CheckOut Process # *** #
 	for i in APPROBED_MAINHEADERS:
 		# APROBACION DE CABECERAS PRINCIPALES
@@ -169,7 +229,6 @@ def debug (dla_name):
 		status = False
 	else:
 		status = True
-
 
 	os.chdir(return_dir)
 	return status

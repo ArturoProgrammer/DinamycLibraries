@@ -1,5 +1,6 @@
 read.segment $TE on $class_test
 
 set.header = {
-	"name" = "dlapart-1"
+	"name" = "dlapart-1",
+	"propietary_program" = "EncryptX"
 }
