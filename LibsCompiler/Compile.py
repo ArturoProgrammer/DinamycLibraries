@@ -96,7 +96,8 @@ def debug (dla_name):
 		"NameError" : "EL NOMBRE REFERENCIADO NO ES VALIDO",
 		"UnexpectedToken" : "NO SE ESPERABA",
 		"HeaderMissing" : "NO HA SIDO DECLARADA LA CABECERA",
-		"TokenAbsent" : "HACE FALTA EL TOKEN"
+		"TokenAbsent" : "HACE FALTA EL TOKEN",
+		"MissingName" : "NO SE HA DECLARADO EL NOMBRE REFERENCIADO"
 	}
 
 	# Almacenado de lineas
@@ -156,8 +157,11 @@ def debug (dla_name):
 				deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i],arg = dead_string[3], error = "UnexpectedToken", text = ERRORS_LIST["UnexpectedToken"])))
 				fails_count += 1
 
+
 	# Proceso Dos - revisar los bloques
-	# # NOTE: HACER
+	
+	# # # TODO: HACER
+
 
 	# Proceso Tres - revisar los segmentos
 	TOKENS_LIST	= [
@@ -166,11 +170,10 @@ def debug (dla_name):
 	expected_string = ["@", "[", ":", "]", "("]
 
 	for i in DICT_LINES:
-		if str(DICT_LINES[i])[:3] == "@[r":
+		if str(DICT_LINES[i])[:2] == "@[":
 			string = str(DICT_LINES[i])[:-1]	# Cadena de linea
 
 			predead_string 	= []	# Lista de cadena pre-muerta
-			dead_string		= []	# Lista de cadena muerta
 			ref_arg 		= ""
 			tokens			= []	# Tokens presentes en la cadena
 
@@ -184,8 +187,6 @@ def debug (dla_name):
 			# Comprobador de errores en caso de faltar algun token en la linea
 			miss_tkn = ""
 			if len(tokens) != 5:
-
-				# CORREGIR LINEA AL TERMINAR EL dead_string
 				tkns_index		= []
 
 				for a in tokens:
@@ -194,14 +195,11 @@ def debug (dla_name):
 							tkns_index.append(expected_string.index(b))
 
 				for ind in tkns_index:
-					#print(tkns_index.index(ind))
 					actual = ind
 					expected = int(ind + 1)
 
 					try:
 						if tkns_index.index(expected) != expected:
-							pass
-						else:
 							pass
 					except ValueError:
 						if expected != 5:
@@ -210,8 +208,33 @@ def debug (dla_name):
 				deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
 				fails_count += 1
 
-			#print(string)
-			#print(predead_string)
+			# # TODO: COMPLETAR PROCESO PARSER DE SEGMENTOS
+			# * HACER Y TERMINAR PROCESO DE SEMANTICA
+			words_list	= []
+			for posit in predead_string:
+				word = []
+				for char in posit:
+					if not char in expected_string:
+						word.append(char)
+				if len(word) != 0:
+					word = str("".join(word))
+					words_list.append(word)
+
+			if len(words_list) == 2:
+				if words_list[0] != "referential":
+					deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = words_list[0], error = "NameError", text = ERRORS_LIST["NameError"])))
+					fails_count += 1
+				if str(words_list[1])[0] != '"' or str(words_list[1])[-1] != '"':
+					deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = '"', error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
+					fails_count += 1
+			else:
+				if "referential" in words_list:
+					deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i], error = "MissingName", text = ERRORS_LIST["MissingName"])))
+					fails_count += 1
+				else:
+					deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = words_list[0], error = "NameError", text = ERRORS_LIST["NameError"])))
+					fails_count += 1
+
 
 	# *** # Aqui va el CheckOut Process # *** #
 	for i in APPROBED_MAINHEADERS:
