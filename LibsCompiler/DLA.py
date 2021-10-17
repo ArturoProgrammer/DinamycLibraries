@@ -4,6 +4,9 @@
 import os
 import sys
 from io import open
+from difflib import SequenceMatcher
+from LibsCompiler.SystemAlerts import deploy
+import LibsCompiler.Compile
 
 # # NOTE: PERFECCIONAR QUE AUTOMATICAMENTE SE CAMBIEN LOS TABS POR '¶'
 # # NOTE: IMPLEMENTAR EL SISTEMA DE ENCRIPTACION N-X
@@ -35,8 +38,14 @@ class read (object):
 
 		if os.path.exists(filetoread):
 			fileaction = open(filetoread, "r")
+
+			if LibsCompiler.Compile.debug(filetoread, alerts=False) == False:
+				pass
+				# Se termina el programa
+
 			# ANALIZA EL ARCHIVO PARA ENCONTRAR LOS BEGIN Y END
 			block_on_line = 0
+
 			for actual_line in fileaction.readlines():
 				wactual_line = actual_line.lstrip()
 
@@ -56,14 +65,20 @@ class read (object):
 					pass
 
 				# BUSCA EL SEGMENTO A LEER
-				if wactual_line[:13] == "@[referential":
-					if wactual_line[17:-5] == referential:
-						z = num_lines
+				SEGMENT_REFERENTIAL_MATCH = '@[referential : ""] ('
+				match_percent = SequenceMatcher(None, SEGMENT_REFERENTIAL_MATCH, wactual_line).ratio()
+
+
+				if match_percent >= 0.5:
+					#print("HEMOS ENCONTRADO UN REFERENCIAL")
+					if wactual_line[:1] == "@":
+						if len(wactual_line.split()) == 4:
+							if wactual_line[17:-5] == referential:
+								z = num_lines
+
 				if wactual_line == "BEGIN\n":
-					#print("===INICIO DE LINEA ENCONTRADO===", wactual_line)
 					id_locations.append(num_lines)	# AGREGA COORDENADA
 				elif wactual_line == "END\n":
-					#print("===FIN DE LINEA ENCONTRADO===", wactual_line)
 					id_locations.append(num_lines)	# AGREGA COORDENADA
 				elif wactual_line == "\n":
 					None
@@ -106,7 +121,12 @@ class read (object):
 					parser.append(text_lines[x])
 				x += 1
 
-			parser.remove("BEGIN\n")	# ELIMINAMOS UN ELEMENTO BASURA DEL PARSER
+
+			try:
+				parser.remove("BEGIN\n")	# ELIMINAMOS UN ELEMENTO BASURA DEL PARSER
+			except ValueError:
+				pass
+
 			chars_list = []	# SE ALMACENAN LOS CARACTERES
 
 			for p_objetcts in parser:
@@ -117,79 +137,8 @@ class read (object):
 					else:
 						chars_list.append(char)	# SEPARA TODOS LOS CARACTERES
 
-			#print(chars_list)
-			#print("".join(chars_list))
-
-			#print("* Codigo OBJ: ", parser)
-			#print("* IDs en: ", id_locations)
-			#print("*/*: ", text_lines)
-			#print("ARCHIVO LEYENDO:", filetoread)
-			#print("CANTIDAD DE LINEAS DEL ARCHIVO: {}".format((num_lines)))
-			#print("REFERENCIAL ENCONTRADO EN: {}".format(z))
-
 			final_value = parser
 
 			# Retorna una tupla con valores
 			# ( NOMBRE DE LA LIBRERIA , CODIGO DEL SEGMENTO A EJECUTAR )
 			return dlatoread, final_value
-
-
-
-
-class headers():
-	# HEADERS DEL SISTEMA
-	# * name 		* multiuse
-	# * libpart		* proprietary_program
-	#
-	# Estatus:
-	# * public__	Para cabeceras de acceso publico
-	# * private__	Para cabeceras de acceso privado
-
-	# # NOTE: Funcion terminada
-	def get(dfile, head_t):
-		"""Obtiene el header indicado"""
-		HEADER_VALUE	= ""
-		LINES_LIST		= []
-
-		f = open(dfile, "r")
-		f_content = f.readlines()
-
-		flines = []
-		for a in f_content:
-			flines.append(a)
-
-		# Se enlistan los headers
-		headers_list = []	# Lista de los headers
-		for line in flines:
-			if line[:7] == "#define":
-				headers_list.append(line)
-
-
-		# Se comienza a buscar el header objetivo
-		for a in headers_list:
-			predead_string	= []
-			dead_string		= [] # Linea de cabecera separada
-
-			predead_string = a.split()
-
-			for i in predead_string[0:4]:
-				dead_string.append(i)
-
-			fal_ext = str(" ".join(predead_string[4:]))
-			dead_string.append(fal_ext)
-
-			if dead_string[2] == head_t and dead_string[1] == "public__":
-				HEADER_VALUE = dead_string[4]
-				HEADER_VALUE = HEADER_VALUE[1:-1]
-
-		return HEADER_VALUE
-
-
-
-	def set(head_info):
-		"""Graba los datos del header en un dla"""
-		# head_info	<- { privacy : priv , name : value }
-		# ejemplo:
-		# 	{ "privacy" : "private" , "libpart" : "part-1" }
-
-		pass
