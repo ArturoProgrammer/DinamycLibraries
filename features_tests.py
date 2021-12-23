@@ -1,33 +1,61 @@
-import os
-from sys import argv
+from tkinter import *
+from tkinter import ttk
 
+mensajes_dict = {
+    1 : ["EN LINEA 9 EN ARCHIVO ejemplo.dla:", "block: 'clase_prueba'  {", "*** TokenAbsent: HACE FALTA EL TOKEN ';'"],
+    2 : ["EN LINEA 9 EN ARCHIVO ejemplo.dla:", "blck: 'clase_preba' ; {", "*** NameError: 'blck:' EL NOMBRE REFERENCIADO NO ES VALIDO"]
+}
+
+
+def tk_mode ():
+    # Despliegue de mensajes atraves de tkinter
+    root = Tk()
+
+    frm = ttk.Frame(root, padding=80)
+    frm.grid()
+    ttk.Label(frm, text=msg).grid(column=0, row=0)
+    ttk.Button(frm, text="Quit", command=root.destroy).grid(column=1, row=0)
+
+    root.mainloop()
+
+
+
+def vbs_mode (m_dict):
+    # Despliegue de mensajes usando Visual Basic Script (VBS)
+    message_line = ""
+    msg_counter = 0
+
+    for i in m_dict:
+        msg_counter += 1
+
+
+    #print(" & vbNewLine & ".join(mensajes_dict[3]))
+    message_data = []
+    for i in m_dict:
+        string = m_dict[i]
+
+        part_one = string[0]
+        part_two = string[1]
+        part_three = string[2]
+
+        if i == msg_counter:
+            line = str('"{}" & vbNewLine & "{}" & vbNewLine & "{}"'.format(part_one, part_two, part_three))
+            message_data.append(line)
+        else:
+            line = str('"{}" & vbNewLine & "{}" & vbNewLine & "{}" & vbNewLine & '.format(part_one, part_two, part_three))
+            message_data.append(line)
+
+
+    script_code = "".join(message_data)
+
+    error_file = open("messagebox.vbs", "w")
+    error_file.write('x = MsgBox({}, 16, "Error de compilacion")'.format(script_code))
+    error_file.close()
+
+    import subprocess
+    subprocess.call(["start", "messagebox.vbs"], shell = True)
+
+
+# Secuencia de ejecucion
 if __name__ == '__main__':
-    file = open(argv[1], "r")
-    f_content = file.readlines()
-    block = argv[2]
-    ref = argv[3]
-
-    print("EN:", block)
-    print("BUSCANDO:", ref)
-
-    LINES_DICT          = {}    # { numero de linea : contenido de linea }
-    counter             = 1     # Contador de lineas
-    important_elements  = []    # Lista con elementosimprotantes (begin, end, block, ref)
-    b_line              = 0     # Linea en la que esta el block que se esta buscando
-
-    for a in f_content:
-        a = a.lstrip()
-
-        LINES_DICT[counter] = a
-
-        if a[:6] == "block:":
-            print("BLOQUE: {} ENCONTRADO".format(a))
-            print(a[8:-6])
-            important_elements.append(counter)
-            if a[8:-6] == block:
-                b_line = counter
-                print("****BLOCK LISTOOOOOOOOOOO****")
-        counter += 1
-
-    print(important_elements)
-    print(LINES_DICT)
+    vbs_mode(mensajes_dict)

@@ -81,6 +81,7 @@ def debug (dla_name, alerts = True):
 	# Retorna:
 	# * True en caso de pasar la prueba con exito
 	# * False en caso de lo contrario
+
 	return_dir = os.getcwd()
 	dir = str(os.getcwd())[:-12]
 
@@ -119,6 +120,12 @@ def debug (dla_name, alerts = True):
 		"language" : False
 	}
 
+	MSG_ERROR_DICT = {}
+	# Diccionario con los errores salientes durante la compilacion
+	# Estructura:
+	# { counter : [ "primera parte" , "segunda parte" , "tercera parte"] }
+
+
 	f_open = open(dla_name, "r")
 	read_action = f_open.readlines()
 
@@ -152,18 +159,69 @@ def debug (dla_name, alerts = True):
 				DEAD_DICT[c] = x
 				c += 1
 
+			revisado = False
 			if dead_string[0] != "#define":
 				if str(dead_string[0])[:1] != "#":
 					miss_tkn = "#"
-					if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
+					RETURN_ERROR = []
+
+					part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+					part_two = "\t{line}".format(line = str(DICT_LINES[i])[:-1])
+					part_three = "*** {error}: {text} '{arg}'".format(arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])
+
+					RETURN_ERROR.append(part_one)
+					RETURN_ERROR.append(part_two)
+					RETURN_ERROR.append(part_three)
+
 					fails_count += 1
-				if str(dead_string[0])[1:] != "define":
-					if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i],arg = dead_string[0], error = "NameError", text = ERRORS_LIST["NameError"])))
-					fails_count += 1
+					MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+					revisado = True
+				else:
+					if str(dead_string[0])[1:] != "define":
+						revisado = True
+						RETURN_ERROR = []
+
+						part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+						part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+						part_three = "*** {error}: {text} '{arg}'".format(arg = dead_string[0], error = "NameError", text = ERRORS_LIST["NameError"])
+
+						RETURN_ERROR.append(part_one)
+						RETURN_ERROR.append(part_two)
+						RETURN_ERROR.append(part_three)
+
+						fails_count += 1
+						MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+
+				if revisado == False:
+					if str(dead_string[0])[1:] != "define":
+						RETURN_ERROR = []
+
+						part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+						part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+						part_three = "*** {error}: {text} '{arg}'".format(arg = dead_string[0], error = "NameError", text = ERRORS_LIST["NameError"])
+
+						RETURN_ERROR.append(part_one)
+						RETURN_ERROR.append(part_two)
+						RETURN_ERROR.append(part_three)
+
+						fails_count += 1
+						MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+
 			# Comenzar con el proceso parser del segundo argumento (privacidad)
 			if dead_string[1] != "public__" and dead_string[1] != "private__":
-				if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i],arg = dead_string[1], error = "NameError", text = ERRORS_LIST["NameError"])))
+				RETURN_ERROR = []
+
+				part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+				part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+				part_three = "*** {error}: {text} '{arg}'".format(arg = dead_string[1], error = "NameError", text = ERRORS_LIST["NameError"])
+
+				RETURN_ERROR.append(part_one)
+				RETURN_ERROR.append(part_two)
+				RETURN_ERROR.append(part_three)
+
 				fails_count += 1
+				MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+
 			# Comprobacion de existencia de cabeceras principales
 			if dead_string[2] == "propietary_program":
 				APPROBED_MAINHEADERS["propietary_program"] = True
@@ -173,8 +231,18 @@ def debug (dla_name, alerts = True):
 				APPROBED_MAINHEADERS["language"] = True
 			# Analizador del 4to aargumento (simbolo de asignacion "=")
 			if dead_string[3] != "=":
-				if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i],arg = dead_string[3], error = "UnexpectedToken", text = ERRORS_LIST["UnexpectedToken"])))
+				RETURN_ERROR = []
+
+				part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+				part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+				part_three = "*** {error}: {text} '{arg}'".format(arg = dead_string[3], error = "UnexpectedToken", text = ERRORS_LIST["UnexpectedToken"])
+
+				RETURN_ERROR.append(part_one)
+				RETURN_ERROR.append(part_two)
+				RETURN_ERROR.append(part_three)
+
 				fails_count += 1
+				MSG_ERROR_DICT[fails_count] = RETURN_ERROR
 
 	TOKENS_LIST	= [
 		"@", "[", "]", "(", ")", "{", "}", ":", ";"
@@ -194,22 +262,63 @@ def debug (dla_name, alerts = True):
 
 			# # TODO: HACER
 			if string[0] != "block:":
-				if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i],arg = string[0], error = "NameError", text = ERRORS_LIST["NameError"])))
+				RETURN_ERROR = []
+
+				part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+				part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+				part_three = "*** {error}: {text} '{arg}'".format(arg = string[0], error = "NameError", text = ERRORS_LIST["NameError"])
+
+				RETURN_ERROR.append(part_one)
+				RETURN_ERROR.append(part_two)
+				RETURN_ERROR.append(part_three)
+
 				fails_count += 1
+				MSG_ERROR_DICT[fails_count] = RETURN_ERROR
 
 			# # NOTE: 1 - COMPROBAR AUSENCIA DE TOKENS
 			if str(string[1])[0] != "'" or str(string[1])[-1] != "'":
 				miss_tkn = "'"
-				if alerts == True: deploy(str('EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} "{arg}"'.format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
+				RETURN_ERROR = []
+
+				part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+				part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+				part_three = "*** {error}: {text} {arg}".format(arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])
+
+				RETURN_ERROR.append(part_one)
+				RETURN_ERROR.append(part_two)
+				RETURN_ERROR.append(part_three)
+
 				fails_count += 1
+				MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+
 			if string[2] != ";":
 				miss_tkn = ";"
-				if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
+				RETURN_ERROR = []
+
+				part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+				part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+				part_three = '*** {error}: {text} "{arg}"'.format(arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])
+
+				RETURN_ERROR.append(part_one)
+				RETURN_ERROR.append(part_two)
+				RETURN_ERROR.append(part_three)
+
 				fails_count += 1
+				MSG_ERROR_DICT[fails_count] = RETURN_ERROR
 			if string[-1] != "{":
 				miss_tkn = "{"
-				if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
+				RETURN_ERROR = []
+
+				part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+				part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+				part_three = '*** {error}: {text} "{arg}"'.format(arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])
+
+				RETURN_ERROR.append(part_one)
+				RETURN_ERROR.append(part_two)
+				RETURN_ERROR.append(part_three)
+
 				fails_count += 1
+				MSG_ERROR_DICT[fails_count] = RETURN_ERROR
 
 
 	# Proceso Tres - revisar los segmentos
@@ -253,9 +362,21 @@ def debug (dla_name, alerts = True):
 					except ValueError:
 						if expected != 5:
 							miss_tkn = expected_string[expected]
-				if miss_tkn == '': miss_tkn = "@"
-				if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
-				fails_count += 1
+				if miss_tkn == '':
+					# # NOTE: SOLUCIONAR ERROR DE COMPATIBILIDAD
+					miss_tkn = "@"
+					RETURN_ERROR = []
+
+					part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+					part_two = "\t{line}".format(line = str(DICT_LINES[i])[:-1])
+					part_three = "*** {error}: {text} {arg}".format(arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])
+
+					RETURN_ERROR.append(part_one)
+					RETURN_ERROR.append(part_two)
+					RETURN_ERROR.append(part_three)
+
+					fails_count += 1
+					MSG_ERROR_DICT[fails_count] = RETURN_ERROR
 
 			# # TODO: COMPLETAR PROCESO PARSER DE SEGMENTOS
 			# * HACER Y TERMINAR PROCESO DE SEMANTICA
@@ -271,36 +392,90 @@ def debug (dla_name, alerts = True):
 
 			if len(words_list) == 2:
 				if words_list[0] != "referential":
-					if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = words_list[0], error = "NameError", text = ERRORS_LIST["NameError"])))
+					RETURN_ERROR = []
+
+					part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+					part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+					part_three = "*** {error}: {text} '{arg}'".format(arg = words_list[0], error = "NameError", text = ERRORS_LIST["NameError"])
+
+					RETURN_ERROR.append(part_one)
+					RETURN_ERROR.append(part_two)
+					RETURN_ERROR.append(part_three)
+
 					fails_count += 1
+					MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+
 				if str(words_list[1])[0] != '"' or str(words_list[1])[-1] != '"':
-					if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text} '{arg}'".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = '"', error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])))
+					miss_tkn = '"'
+					RETURN_ERROR = []
+
+					part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+					part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+					part_three = '*** {error}: {text} "{arg}"'.format(arg = miss_tkn, error = "TokenAbsent", text = ERRORS_LIST["TokenAbsent"])
+
+					RETURN_ERROR.append(part_one)
+					RETURN_ERROR.append(part_two)
+					RETURN_ERROR.append(part_three)
+
 					fails_count += 1
+					MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+
 			else:
 				if "referential" in words_list:
-					if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i], error = "MissingName", text = ERRORS_LIST["MissingName"])))
+					RETURN_ERROR = []
+
+					part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+					part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+					part_three = "*** {error}: {text}".format(error = "MissingName", text = ERRORS_LIST["MissingName"])
+
+					RETURN_ERROR.append(part_one)
+					RETURN_ERROR.append(part_two)
+					RETURN_ERROR.append(part_three)
+
 					fails_count += 1
+					MSG_ERROR_DICT[fails_count] = RETURN_ERROR
+
 				else:
-					if alerts == True: deploy(str("EN LINEA {l_n} EN ARCHIVO {file}: \n\t{line}*** {error}: '{arg}' {text}".format(file = dla_name, l_n = i, line = DICT_LINES[i], arg = words_list[0], error = "NameError", text = ERRORS_LIST["NameError"])))
+					RETURN_ERROR = []
+
+					part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+					part_two = "\t {line}".format(line = str(DICT_LINES[i])[:-1])
+					part_three = "*** {error}: {text} '{arg}'".format(arg = words_list[0], error = "NameError", text = ERRORS_LIST["NameError"])
+
+					RETURN_ERROR.append(part_one)
+					RETURN_ERROR.append(part_two)
+					RETURN_ERROR.append(part_three)
+
 					fails_count += 1
+					MSG_ERROR_DICT[fails_count] = RETURN_ERROR
 
 			# * INCLUIR PARSER DE CIERRE DE TOKENS ")" y "}"
 
 
 	# *** # Aqui va el CheckOut Process # *** #
-	for i in APPROBED_MAINHEADERS:
+	for hi in APPROBED_MAINHEADERS:
 		# APROBACION DE CABECERAS PRINCIPALES
-		if APPROBED_MAINHEADERS[i] == True:
+		if APPROBED_MAINHEADERS[hi] == True:
 			fails_count += 0
 		else:
-			if alerts == True: deploy(str("EN ARCHIVO {file}: \n*** {error}: {text} '{arg}'".format(file = dla_name, arg = i, error = "HeaderMissing", text = ERRORS_LIST["HeaderMissing"])))
-			fails_count += 1
+			RETURN_ERROR = []
 
+			part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+			part_two = "\t {line}".format(line = "Headers")
+			part_three = "*** {error}: {text} '{arg}'".format(arg = hi, error = "HeaderMissing", text = ERRORS_LIST["HeaderMissing"])
+
+			RETURN_ERROR.append(part_one)
+			RETURN_ERROR.append(part_two)
+			RETURN_ERROR.append(part_three)
+
+			fails_count += 1
+			MSG_ERROR_DICT[fails_count] = RETURN_ERROR
 
 	# Conteo de fallos
 	status = False
 	if fails_count >= 1:
 		status = False
+		if alerts == True: deploy(MSG_ERROR_DICT, mode="windowed")
 	else:
 		status = True
 

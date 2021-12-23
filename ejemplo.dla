@@ -1,13 +1,13 @@
-#define public__ name = 'ejemplodlib'
+#define public__ nae = 'ejemplodlib'
 #define private__ libpart = 'librarypart-1'
-#define private__ multiuse = 'True'
+#dfine private__ multiuse  'True'
 #define public__ propietary_program = 'Shared File System'
 
 // Se define el lenguaje de programacion que contiene la libreria
-#define private__ language = 'Python'
+define prvate__ language = 'Python'
 
-block: 'clase_prueba' ; {
-	@[referential : "SI"] (
+blck: 'clase_prueba' ; {
+	[referential : "SI"] (
 		BEGIN
 		print("Sirve")
 		END
