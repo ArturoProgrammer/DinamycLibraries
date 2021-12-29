@@ -475,7 +475,10 @@ def debug (dla_name, alerts = True):
 	status = False
 	if fails_count >= 1:
 		status = False
-		if alerts == True: deploy(MSG_ERROR_DICT, mode="windowed")
+		# Modo para despliegue de errores
+		if alerts == True: deploy(MSG_ERROR_DICT, mode="windowed", type="COMPILE")
+		# ESTATUS DE PARAMETRO MODE
+		# * windowed	* cli (default)
 	else:
 		status = True
 
