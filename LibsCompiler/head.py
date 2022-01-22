@@ -44,6 +44,7 @@ class headers():
 				HEADER_VALUE = dead_string[4]
 				HEADER_VALUE = HEADER_VALUE[1:-1]
 
+		print("VALOR DE HEADER:", HEADER_VALUE)
 		return HEADER_VALUE
 
 

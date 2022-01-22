@@ -127,6 +127,7 @@ def debug (dla_name, alerts = True):
 
 
 	f_open = open(dla_name, "r")
+	print("NOMBRE DE DLA:", dla_name)
 	read_action = f_open.readlines()
 
 	for actual_line in read_action:
@@ -487,14 +488,92 @@ def debug (dla_name, alerts = True):
 
 
 
+# # NOTE: Funcion en proceso / Corrobar para concluir
+def blockSearch (lib_file, block_name):
+	# Valida la existencia del bloque a buscar
+	# lib_file		= nombre del archivo a leer
+	# block_name	= nombre del bloque a buscar
+	i 		= 0
+	blc_x	= 0
+	blc_y	= 0
+
+	f_io 	= open(lib_file, "r")
+	content = f_io.readlines()
+
+
+	# Se buscan todos los bloques del archivo
+	i_fake 		= 0
+	ALL_BLOCKS	= []
+
+	for line in content:
+		i_fake += 1
+		line = line[:-1]
+
+		BLOCK_REFERENTIAL_MATCH = "block: ' ' ; {"
+		match_percent = SequenceMatcher(None, BLOCK_REFERENTIAL_MATCH, line).ratio()
+
+		if match_percent >= 0.6:
+			ALL_BLOCKS.append(i_fake)	# Se guarda la posicion de inicio
+		if line == "}":
+			ALL_BLOCKS.append(i_fake)	# Se guarda la posicion de cierre
+
+
+	BLOCK_REFERENTIAL = "block: '", block_name, "' ; {"
+	b = []
+	for a in BLOCK_REFERENTIAL:
+		b.append(a)
+	BLOCK_REFERENTIAL = "".join(b)
+
+	# Se revisa el codigo para buscar las coordenadas correspondientes
+	for line in content:
+		i += 1
+		line = line[:-1]	# Se elimina el caracter de salto (\n)
+
+		if line == BLOCK_REFERENTIAL:
+			blc_x = i
+		if line == "}":
+			if blc_x != 0:
+				blc_y = ALL_BLOCKS[ALL_BLOCKS.index(blc_x) + 1]
+
+	f_io.close()
+
+	block_coord = (blc_x, blc_y)
+
+	if block_coord == (0, 0):
+		deploy("No existe el bloque {}".format(block_name), type="GENERAL", mode="windowed")
+		return block_coord
+	else:
+		return block_coord
+
+
+
 # # NOTE: Funcion estable / falta terminar
 def run (lib_data):
 	"""Compila y ejecuta la liberia una vez que pasa el Debug"""
-	lib_name	= lib_data[0]	# Nombre del archivo de la DLA
-	lib_content	= lib_data[1]	# Codigo a ejecutar
-	f_name		= ""
-	program_lib = headers.get(lib_name, "propietary_program")	# Programa "Dueño" de la libreria
+	# En caso de recibir una tupla (ejecucion de segmento)
+	# DECLARACION DE VARIABLES GLOBALES
+	lib_name	=	""	# Nombre del archivo de la DLA
+	lib_content	=	""	# Codigo a ejecutar
 
+	# En caso de recibir una tupla (ejecucion de segmento)
+	if isinstance(lib_data, tuple) == True:
+		lib_name	= lib_data[0]
+		lib_content	= lib_data[1]
+		f_name		= ""
+
+	# En caso de recibir una lista (ejecucion de bloque)
+	if isinstance(lib_data, list) == True:
+		print("**:", lib_data)
+		lib_name	= lib_data[0][0]
+		print("-->:",lib_name)
+		# Declaracion de lib_content
+		contents = []
+		for i in lib_data:
+			code = i[1]
+			contents.append(str("".join(code)))
+		lib_content = contents	# Todos los segmendos de codigo del bloques
+
+	program_lib = headers.get(lib_name, "propietary_program")	# Programa "Dueño" de la libreria
 	return_dir = os.getcwd()
 
 	root_1	= ".cache/"
@@ -512,6 +591,7 @@ def run (lib_data):
 			os.chdir(root_2)
 		else:
 			os.chdir(root_2)
+
 
 	# Ejecucion
 	if debug(lib_name) == True:

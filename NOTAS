@@ -1,5 +1,11 @@
 escritura en python -> compilador -> .dla
 
+* arreglar GUI mensajes generales
+* terminar block_search()
+* resolver/hacer parser de identidades (tabs de segmentos de codigo)
+
+.dlib (texto plano) -> .dla (encriptado)
+
 Estructura:
 
 DinamycLibraries/
@@ -8,7 +14,7 @@ DinamycLibraries/
 		-> DLA.py
 			* read
 				* segment() ※
-				* block()
+				* block() 
 			* write
 				* block()
 				* segment()
@@ -17,10 +23,10 @@ DinamycLibraries/
 				* get() ※
 		-> HDLA.py
 		-> Compile.py
-			* debug()
+			* debug() ※
 			* run()
 		-> SystemAlerts.py
-			* deploy()
+			* deploy() ※
 		-> EncryptX/
 	-> __init__.py
 

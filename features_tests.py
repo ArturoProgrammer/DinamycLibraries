@@ -11,7 +11,6 @@ def tk_mode (msg):
     msg_dict = msg
     # Despliegue de mensajes atraves de tkinter
     root = Tk()
-
     for error in msg_dict:
 
         frm = ttk.Frame(root, padding=20)

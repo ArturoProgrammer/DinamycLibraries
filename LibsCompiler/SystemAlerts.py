@@ -1,6 +1,7 @@
 from tkinter import messagebox
 from tkinter import *
 from tkinter import ttk
+import sys
 
 def __vbs_mode (m_dict):
     # Despliegue de mensajes usando Visual Basic Script (VBS)
@@ -64,6 +65,7 @@ def alert_emergent (w_title, msg, type):
     if isinstance(msg, dict) == True and type == "COMPILE":
         msg_dict = msg
         c = 0
+        root.eval('tk::PlaceWindow . center')
         for error in msg_dict:
             frm = ttk.Frame(root, padding=10)
             #frm.grid()
@@ -108,13 +110,24 @@ def alert_emergent (w_title, msg, type):
         #ttk.Button(frm, text="Quit", command=root.destroy).grid(column=0, row=c+4, sticky=SE)
         print("*****IMPOSIBLE DE COMPILAR*****")
         if c >= 2:
-            print("\n--> EXISTEN {} ERRORES".format(c))
+            print("\n --> EXISTEN {} ERRORES".format(c))
         elif c == 1:
-            print("\n--> EXISTE {} ERROR".format(c))
+            print("\n --> EXISTE {} ERROR".format(c))
 
         B_EXIT = ttk.Button(frm, text="Ok", command=root.destroy)
         B_EXIT.pack(side=RIGHT)
         ttk.Label(frm, text=str("Se registraron un total de {} errores".format(c))).pack(before=B_EXIT, side=LEFT)
+
+    # Si es mensaje de alerta general...
+    elif isinstance(msg, str) == True:
+        frm = ttk.Frame(root, padding = 10)
+        #root.geometry("300x100")
+        root.eval('tk::PlaceWindow . center')
+        frm.grid()
+
+
+        label = ttk.Label(frm, text=msg).grid(column=0, row=0, sticky=W)
+        ttk.Button(frm, text="Ok", command=root.destroy).grid(column=0, sticky=SE)
 
     root.mainloop()
 
@@ -141,7 +154,7 @@ def deploy (msg, mode="cli", type="GENERAL"):
         elif isinstance(msg, str) == True:
             # En caso de recibir una cadena
             # (cadena = debug exitoso)
-            pass
+            print(msg)
         elif isinstance(msg, dict) == True:
             # En caso de recibir un diccionario (METODO USADO)
             #print("\n\n{}\n\n".format(msg))
@@ -152,3 +165,7 @@ def deploy (msg, mode="cli", type="GENERAL"):
         # Programar modo ventana (funcion: alert_emergent)
         if isinstance(msg, dict) == True:
             alert_emergent("Error de Compilacion", msg, type=alert_type)
+        if isinstance(msg, str) == True:
+            alert_emergent("Error de Compilacion", msg, type=alert_type)
+
+        sys.exit()

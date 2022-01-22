@@ -1,0 +1,4 @@
+REQUIRES:
+* Crypto
+* Tkinter
+* Python 3.x

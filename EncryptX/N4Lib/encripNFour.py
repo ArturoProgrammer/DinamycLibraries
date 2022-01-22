@@ -13,20 +13,20 @@ import crypto
 def validation_key (key):
 	"""VERIFICA LA VALIDEZ DE UNA LLAVE, EN LA DB"""
 	_path = ".master/.access/dkcache/"
-	
+
 	if not os.path.exists(_path):
 		print("NO EXISTE")
-		root_1 = ".master/" 
+		root_1 = ".master/"
 		root_2 = ".access/"
 		root_3 = "dkcache/"
 
 		os.mkdir(root_1)
 		os.chdir(root_1)
-		os.mkdir(root_2) 
+		os.mkdir(root_2)
 		os.chdir(root_2)
 		os.mkdir(root_3)
 		os.chdir(root_3)
-		
+
 		db_fk = open("Xkeydb0.xrk", "w")
 		db_fk.write("")
 		db_fk.close()
@@ -36,7 +36,7 @@ def validation_key (key):
 		db_fm.close()
 	else:
 		os.chdir(_path)
-	
+
 	key_status = False
 
 	dblink = open("Xkeydb0.xrk", "r")
@@ -82,14 +82,14 @@ def savedbMsg (msg, ahash):
 				if os.path.exists(directory):
 					os.chdir(directory)
 					dbfile = open("Xmsgdb1.xrk", "a")
-					
+
 					msg = msg.split()
 					DIC_LINE = "{b} --> {a}\n".format(a = ahash, b = msg)
 
 					dbfile.write(DIC_LINE)
 					dbfile.close()
-					
-					
+
+
 					import EncryptX.trash
 					EncryptX.trash.garbageCollector('file:Xmsgdb1.xrk')
 					EncryptX.trash.synchronizer(msg_db = "Xmsgdb1.xrk", key_db = "Xkeydb0.xrk")
@@ -111,10 +111,10 @@ def savedbMsg (msg, ahash):
 # # NOTE: funcion terminada
 def update (msg, newhash):
 	"""ACTUALIZA LA BASE DE DATOS CON UN NUEVO HASH"""
-	 
+
 	# Si se repite un mensaje pero tienen diferente hash
 	# Se realiza el reemplazo del viejo con el nuevo
-	
+
 	# PROCESO DE ACTUALIZACION EN MSG DB
 	if isinstance(msg, str) == True:
 		if len(msg) >= 1:
@@ -132,7 +132,7 @@ def update (msg, newhash):
 				if line.find(str(msg)) != -1:
 					OBJ_MSG = line[0:int(len(str(msg)) + 5)]
 					OBJ_LINE = "{a} --> {b}\n".format(a = msg, b = newhash)
-					
+
 					existent_lines.append(OBJ_LINE)
 
 					oldhash = line[int(len(str(msg)) + 5):-1]
@@ -147,7 +147,7 @@ def update (msg, newhash):
 			_db = open("Xmsgdb1.xrk", "w")
 			_db.write(file_lines)
 			_db.close()	# Se cierra el enlace nuevamente tras concluir la re-escritura
-			
+
 			import EncryptX.trash
 			EncryptX.trash.garbageCollector('file:Xmsgdb1.xrk')
 			EncryptX.trash.synchronizer(msg_db = "Xmsgdb1.xrk", key_db = "Xkeydb0.xrk")
@@ -164,7 +164,7 @@ def update (msg, newhash):
 
 					_key = line[int(len(str(_hash)) + 9):-1]
 					OBJ_LINE = "{a} --> {b}\n".format(a = _hash, b = _key)
-					
+
 					kexistent_lines.append(OBJ_LINE)
 				else:
 					kexistent_lines.append(line)
@@ -177,10 +177,10 @@ def update (msg, newhash):
 			_kdb = open("Xkeydb0.xrk", "w")
 			_kdb.write(kfile_lines)
 			_kdb.close()	# Se cierra el enlace nuevamente tras concluir la re-escritura
-			
+
 			import EncryptX.trash
 			EncryptX.trash.garbageCollector('file:Xkeydb0.xrk')
-			EncryptXtr.trash.synchronizer(msg_db = "Xmsgdb1.xrk", key_db = "Xkeydb0.xrk")
+			EncryptX.trash.synchronizer(msg_db = "Xmsgdb1.xrk", key_db = "Xkeydb0.xrk")
 
 			# Nos retornamos al directorio raiz
 			actual_dir = str(os.getcwd())
@@ -197,12 +197,12 @@ def update (msg, newhash):
 def hash_msg_gen (message):
 	"""GENERA UN HASH UNICO PARA CADA MENSAJE"""
 
-	
+
 	# Hay que convertir de lista a cadena para poder manejarla
 	if isinstance(message, list) == True:
 		message = str("".join(message))
-		
-	elif isinstance(message, list) == False: 
+
+	elif isinstance(message, list) == False:
 		if isinstance(message, str) == True:
 			if len(message) >= 1:
 				message = str(message.split())
@@ -230,16 +230,16 @@ def decode (message, keystatus):
 		pair_chars	=	[]	# Caracteres de 'chars' traducidos
 		pair_index	=	0
 
-		CHARDIC = { "s" : "a", "v" : "b", "2" : "c", "ñ" : "d", "7" : "e", "n" : "f", "p" : "g", 
+		CHARDIC = { "s" : "a", "v" : "b", "2" : "c", "ñ" : "d", "7" : "e", "n" : "f", "p" : "g",
 		"6" : "h", "z" : "i", "u" : "j", "4" : "k", "r" : "l", "y" : "m", "f" : "n", "d" : "ñ",
 		"9" : "o", "g" : "p", "3" : "q", "l" : "r",  "a" : "s", "8" : "t", "j" : "u", "b" : "v",
-		"1" : "w", "0" : "x", "m" : "y", "i" : "z", "w" : "1", "c" : "2", "q" : "3", "k" : "4", 
+		"1" : "w", "0" : "x", "m" : "y", "i" : "z", "w" : "1", "c" : "2", "q" : "3", "k" : "4",
 		"5" : "5", "h" : "6", "e" : "7", "t" : "8", "o" : "9", "x" : "0", "\n" : "\n", "\t" : "\t",
 		"¶" : " " }
 
 		#print(message)
 		index_counter = 0	# Contador del indice del mensaje
-		
+
 		for char in message[pair_index:]:
 			index_counter 	+= 1
 			try:
@@ -286,16 +286,16 @@ def decode (message, keystatus):
 					OBJ_CHAR = "\t"
 					#print("***", OBJ_CHAR)
 					DEC_CHARS.append(OBJ_CHAR)
-			
+
 		#print(DEC_CHARS, "\n")
-		
+
 		final_message = str("".join(DEC_CHARS))
 		#print(final_message)
 
 		return final_message
 
 
-# # NOTE: funcion terminada 
+# # NOTE: funcion terminada
 def encode (message, keystatus):
 	"""DECODIFICA LOS MENSAJES RECIBIDOS"""
 
@@ -306,10 +306,10 @@ def encode (message, keystatus):
 		chars 		=	[]	# Lista con los caracteres de la cadena
 		enc_chars	=	[]	# Caracteres de 'chars' traducidos
 
-		CHARDIC = { "a" : "s", "b" : "v", "c" : "2", "d" : "ñ", "e" : "7", "f" : "n", "g" : "p", 
+		CHARDIC = { "a" : "s", "b" : "v", "c" : "2", "d" : "ñ", "e" : "7", "f" : "n", "g" : "p",
 		"h" : "6", "i" : "z", "j" : "u", "k" : "4", "l" : "r", "m" : "y", "n" : "f" ,"ñ" : "d",
 		"o" : "9", "p" : "g", "q" : "3", "r" : "l",  "s" : "a", "t" : "8", "u" : "j", "v" : "b",
-		"w" : "1", "x" : "0", "y" : "m", "z" : "i", "1" : "w", "2" : "c", "3" : "q", "4" : "k", 
+		"w" : "1", "x" : "0", "y" : "m", "z" : "i", "1" : "w", "2" : "c", "3" : "q", "4" : "k",
 		"5" : "5", "6" : "h", "7" : "e", "8" : "t", "9" : "o", "0" : "x", "\n" : "æn", "\t" : "æt",
 		" " : "¶" }
 

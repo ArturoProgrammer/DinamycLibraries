@@ -1,15 +1,53 @@
 #define public__ name = 'ejemplodlib'
 #define private__ libpart = 'librarypart-1'
 #define private__ multiuse = 'True'
-#define public__ propietary_program = 'Shared File System'
+#define public__ propietary_program = 'Programa de Prueba'
 
 // Se define el lenguaje de programacion que contiene la libreria
 #define private__ language = 'Python'
 
 block: 'clase_prueba' ; {
+	@[referential : "YES"] (
+		BEGIN
+		print("Sirve :D; S1")
+		END
+	)
+
 	@[referential : "SI"] (
 		BEGIN
-		print("Sirve")
+		print("Este tambien sirve :DD; S2")
+		END
+	)
+
+	@[referential : "NO"] (
+		BEGIN
+		print("Si esto realmente funciona, significa que lo logre; S3")
+		END
+	)
+
+	@[referential : "PUEDE"] (
+		BEGIN
+		import sys
+		list = [1,2,3,4,5,6,7,8,9,10]
+		for i in list:
+		¶print(i)
+		print("Estoy usando la libreria sys, y el primer argumento es:", sys.argv[0])
+		END
+	)
+}
+
+block: 'clase_test' ; {
+	@[referential : "SI"] (
+		BEGIN
+		print("Este tambien sirve :DD")
+		END
+	)
+}
+
+block: 'test' ; {
+	@[referential : "SI"] (
+		BEGIN
+		print("Si esto realmente funciona, significa que lo logre")
 		END
 	)
 }

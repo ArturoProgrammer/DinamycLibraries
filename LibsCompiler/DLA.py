@@ -21,6 +21,7 @@ def textReplaceEncode (text):
 
 class read (object):
 	# # NOTE: Funcion terminada
+	# ---> LEE Y EJECUTA UN SEGMENTO DE CODIGO
 	def segment (self, dlatoread, block, referential):
 		#print("SE UBICA CON EXITO")
 		"""Retorna una tupla con el nombre de la libreria y el codigo a ejecutar"""
@@ -39,32 +40,57 @@ class read (object):
 		if os.path.exists(filetoread):
 			fileaction = open(filetoread, "r")
 
+			# ---> SE EJECUTA EL COMPILADOR ANTES QUE NADA
 			if LibsCompiler.Compile.debug(filetoread, alerts=False) == False:
 				pass
 				# Se termina el programa
 
-			# ANALIZA EL ARCHIVO PARA ENCONTRAR LOS BEGIN Y END
+			# ---> ANALIZA EL ARCHIVO PARA ENCONTRAR TODOS LOS BEGIN Y END
 			block_on_line = 0
 
-			for actual_line in fileaction.readlines():
+			# ---> SE CREA LA LISTA DE SOLO LAS LINEAS QUE SE VAN A LEER
+			blc_coord = LibsCompiler.Compile.blockSearch(filetoread, block)
+			if blc_coord != (0, 0):
+				BLOCK_LINES_LIST	= []
+				BLL_COUNTER			= 0
+
+				coord_x = blc_coord[0]
+				coord_y = blc_coord[1]
+
+				for i in fileaction.readlines():
+					BLL_COUNTER += 1
+					if BLL_COUNTER >= coord_x and BLL_COUNTER <=coord_y:
+						BLOCK_LINES_LIST.append(i)
+			else:
+				## PROGRAM END ##
+				sys.exit()
+
+			exist = []	# Flags: Existencia del referencial en el bloque
+			for actual_line in BLOCK_LINES_LIST:
 				wactual_line = actual_line.lstrip()
 
 				# # NOTE: AGREGAR FUNCION DE ESCANEAR Y REGISTRAR TODOS LOS REFERENCIALES DE LA LIBRERIA
 
+
 				num_lines += 1
 				text_lines[num_lines] = wactual_line # ALMACENAJE DE LINEAS EN EL DICCIONARIO
 
-				# BUSCA EL BLOQUE A LEER
+
+				"""
+				# ---> BUSCA EL BLOQUE A LEER
 				if wactual_line[:6] == "block:":
 					#print(wactual_line)
 					if wactual_line[8:-6] == block:
 						#print("BLOQUE {} ENCONTRADO EN {}".format(block, num_lines))
 						block_on_line = num_lines
+					else:
+
 				if wactual_line[:1] == "}":
 					#print(wactual_line, "EN LINEA:", num_lines)
 					pass
+				"""
 
-				# BUSCA EL SEGMENTO A LEER
+				# ---> BUSCA EL SEGMENTO (REFERENCIAL) A LEER
 				SEGMENT_REFERENTIAL_MATCH = '@[referential : ""] ('
 				match_percent = SequenceMatcher(None, SEGMENT_REFERENTIAL_MATCH, wactual_line).ratio()
 
@@ -75,6 +101,10 @@ class read (object):
 						if len(wactual_line.split()) == 4:
 							if wactual_line[17:-5] == referential:
 								z = num_lines
+								exist.append(True)
+							else:
+								exist.append(False)
+
 
 				if wactual_line == "BEGIN\n":
 					id_locations.append(num_lines)	# AGREGA COORDENADA
@@ -139,6 +169,117 @@ class read (object):
 
 			final_value = parser
 
+			# ---> Analiza las banderas de existencia del referencial
+			true_c = 0
+			for flag in exist:
+				if flag == True: true_c += 1
+
+
+			if true_c == 1:
+				pass
+			elif true_c >= 1:
+				deploy("Existen multiples segmentos con el referencial '{}', en el bloque '{}', de la libreria '{}'".format(referential, block, dlatoread), type="GENERAL", mode="windowed")
+				sys.exit()
+			elif true_c == 0:
+				deploy("No existe el referencial '{}', en el bloque '{}', de la libreria '{}'".format(referential, block, dlatoread), type="GENERAL", mode="windowed")
+				sys.exit()
+
 			# Retorna una tupla con valores
 			# ( NOMBRE DE LA LIBRERIA , CODIGO DEL SEGMENTO A EJECUTAR )
 			return dlatoread, final_value
+
+
+
+	# # NOTE: Falta terminar
+	# ---> LEE Y EJECUTA TODOS LOS SEGMENTOS DE UN BLOQUE SECUENCIALMENTE O EN ORDEN ESPECIFICO
+	def block (self, dlatoread, block, ORDER = []):
+		# ***** En caso de no existir un orden de ejecucion *****
+		filetoread		= dlatoread		# Libreria a leer
+		lines_counter	= 0				# Contador de lineas del bloque
+		ALL_REF_LIST	= []			# Todos los referenciales del bloque
+		ALL_SEGM_LIST	= []			# Lista con todo el codigo de los segmentos a ejecutar
+
+		# ---> SE EJECUTA EL COMPILADOR ANTES QUE NADA
+		if LibsCompiler.Compile.debug(filetoread, alerts=True) == False:
+			pass
+		else:
+			# En caso de NO existir un orden de ejecucion ...
+			if ORDER == []:
+				file_action = open(filetoread, "r")
+
+				# LOCALIZADOR DE BLOQUE
+				DICT_LINES = {}
+
+				blc_coord = LibsCompiler.Compile.blockSearch(filetoread, block)
+				if blc_coord != (0, 0):
+					BLOCK_LINES_LIST	= []
+					BLL_COUNTER			= 0
+
+					coord_x = blc_coord[0]
+					coord_y = blc_coord[1]
+
+					for i in file_action.readlines():
+						BLL_COUNTER += 1
+						if BLL_COUNTER >= coord_x and BLL_COUNTER <= coord_y:
+							DICT_LINES[BLL_COUNTER] = i[:-1]
+				else:
+					sys.exit() ## PROGRAM END ##
+
+				file_action.close()
+
+				# ---> REGISTRA TODOS LOS SEGMENTOS DEL BLOQUE
+				for line in DICT_LINES:
+					match_percent = SequenceMatcher(None, '@[referential : " "] (', DICT_LINES[line]).ratio()
+					if match_percent >= 0.6:
+						ref_name = str(DICT_LINES[line])[18:-4]
+						ALL_REF_LIST.append(ref_name)
+
+				# ---> EXTRAE CADA SEGMENTO Y LOS REGISTRA EN LA LISTA
+				for referentials in ALL_REF_LIST:
+					sc_tuple = self.segment(filetoread, block, referentials)
+					ALL_SEGM_LIST.append(sc_tuple)
+
+				return ALL_SEGM_LIST
+
+
+			# En caso de existir un orden de ejecucion ...
+			elif ORDER != []:
+				file_action = open(filetoread, "r")
+
+				# LOCALIZADOR DE BLOQUE
+				DICT_LINES = {}
+
+				blc_coord = LibsCompiler.Compile.blockSearch(filetoread, block)
+				if blc_coord != (0, 0):
+					BLOCK_LINES_LIST	= []
+					BLL_COUNTER			= 0
+
+					coord_x = blc_coord[0]
+					coord_y = blc_coord[1]
+
+					for i in file_action.readlines():
+						BLL_COUNTER += 1
+						if BLL_COUNTER >= coord_x and BLL_COUNTER <= coord_y:
+							DICT_LINES[BLL_COUNTER] = i[:-1]
+				else:
+					sys.exit() ## PROGRAM END ##
+
+				file_action.close()
+
+				# ---> Se crea diccionario ordenado
+				ORDER_DICT = {}
+				for i in ORDER:
+					ORDER_DICT[i] = ""
+
+
+				# ---> EXTRAE CADA SEGMENTO Y LOS REGISTRA EN LA LISTA
+				for referential in ORDER_DICT:
+					sc_tuple = self.segment(filetoread, block, referential)
+					ALL_SEGM_LIST.append(sc_tuple)
+
+				print(ALL_SEGM_LIST)
+				return ALL_SEGM_LIST
+
+
+class write (object):
+	pass
