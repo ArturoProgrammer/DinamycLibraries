@@ -1,12 +1,5 @@
-=> $("MASTER_PROGRAM"; "ExternOS"; "public")
-=> $("REQUIRE"; "python3"; "private")
-=> $("NAME"; "PRUEBA DE DLA"; "public")
-=> $("PROG_LANGUAGE"; "python"; "private")
-
 # Script de ejemplo para programar una libreria que posteriormente se generara en .dla
-
 # WOW! creo que esto ya funciona
-
 x = True
 y = [1,2,3,4,5,6,7,8]
 if x == True:

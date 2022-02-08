@@ -7,6 +7,7 @@ from io import open
 from difflib import SequenceMatcher
 from LibsCompiler.SystemAlerts import deploy
 import LibsCompiler.Compile
+import LibsCompiler.head
 
 # # NOTE: PERFECCIONAR QUE AUTOMATICAMENTE SE CAMBIEN LOS TABS POR '¶'
 # # NOTE: IMPLEMENTAR EL SISTEMA DE ENCRIPTACION N-X
@@ -19,7 +20,8 @@ def textReplaceEncode (text):
 
 
 
-class read (object):
+class Read (object):
+	"""Lectura de Librerias DLA"""
 	# # NOTE: Funcion terminada
 	# ---> LEE Y EJECUTA UN SEGMENTO DE CODIGO
 	def segment (self, dlatoread, block, referential):
@@ -189,8 +191,7 @@ class read (object):
 			return dlatoread, final_value
 
 
-
-	# # NOTE: Falta terminar
+	# # NOTE: Funcion aparentemente terminada
 	# ---> LEE Y EJECUTA TODOS LOS SEGMENTOS DE UN BLOQUE SECUENCIALMENTE O EN ORDEN ESPECIFICO
 	def block (self, dlatoread, block, ORDER = []):
 		# ***** En caso de no existir un orden de ejecucion *****
@@ -271,15 +272,195 @@ class read (object):
 				for i in ORDER:
 					ORDER_DICT[i] = ""
 
-
 				# ---> EXTRAE CADA SEGMENTO Y LOS REGISTRA EN LA LISTA
 				for referential in ORDER_DICT:
 					sc_tuple = self.segment(filetoread, block, referential)
 					ALL_SEGM_LIST.append(sc_tuple)
 
-				print(ALL_SEGM_LIST)
 				return ALL_SEGM_LIST
 
 
-class write (object):
-	pass
+
+class Write (object):
+	"""Escritura de DLA; .dlib -> .dla"""
+	# # NOTE: Funcion en proceso
+	# ---> ESCRIBE LA DLA APARTIR DE UN DLIB (script)
+	def __init__ (self, dlatowrite, blc_input, ref_input):
+		# Apertura de .dlib para lectura
+		file_read 	= open(dlatowrite, "r")
+		file_action	= file_read.readlines()
+
+
+		# Extrae lineas de codigo
+		LIST_READY 				= []
+		LINES_DICT 				= {}
+		LINES_DICT["LOGS_LIST"] = []
+		counter 				= 0
+		PRE_LIST 				= []
+
+		# Extrae los LOGS y registra las lineas
+		for line in file_action:
+			if line[0:2] == "=>":
+				LINES_DICT["LOGS_LIST"].append(line[4:-1])
+			else:
+				counter += 1
+				LINES_DICT[counter] = line
+
+		for line in LINES_DICT:
+			if line != "LOGS_LIST":
+				PRE_LIST.append(LINES_DICT[line])
+
+		for i in PRE_LIST:
+			val = i.replace("\t", "¶")
+			LIST_READY.append("\t\t" + val)
+		file_read.close()
+
+
+		BODY_DATA_SEGMENT = """
+\t@[referential : "{AB}"] (
+\t\tBEGIN
+{AC}
+\t\tEND
+\t)
+""".format(AB = ref_input, AC = "".join(LIST_READY))
+		
+		# # NOTE: Hacer ciclo for para escritura de LOGS
+		
+		"""
+		# LOGS PRINCIPALES:
+		# * MASTER_PROGRAM	-> propietary_program
+		# * NAME 			-> name
+		# * PROG_LANGUAGE 	-> language
+		"""
+		
+		DICT_LOGS_VALS		= {}
+		DICT_LOGS 			= LINES_DICT["LOGS_LIST"]
+		CONTROL_POINTS_DICT	= {}
+		for log in DICT_LOGS:
+			CONTROL_POINTS = []
+
+			#log = log.replace(" ", "")
+
+			char_counter = 0
+			for char in log:
+				char_counter += 1
+				if char == ";" or char == ")":
+					CONTROL_POINTS.append(char_counter)
+
+			CONTROL_POINTS_DICT[log] = CONTROL_POINTS
+
+		
+
+		"""
+		for log in DICT_LOGS:
+			for index in CONTROL_POINTS:
+				print(log, index, ";", log[2:index])
+		"""
+
+		print("-->",CONTROL_POINTS_DICT)
+		for log in CONTROL_POINTS_DICT:
+			position	= 0
+			PREVIOUS	= 0
+			count 		= 0
+
+			HEADER_VALS = {
+				"H_NAME" : "",
+				"PRIVACY" : "",
+				"VALUE" : ""
+			}
+
+			header = ""
+			for POINT in CONTROL_POINTS_DICT[log]:
+				position += 1
+				count += 1
+
+				if count == 1:
+					# Dato 1 / Nombre de cabecera
+					print(log[PREVIOUS:POINT], "de {} a {}:".format(PREVIOUS, POINT))
+					log_frag = log[PREVIOUS:POINT].replace("(", "")
+					log_frag = log_frag.replace(")", "")
+					log_frag = log_frag.replace(";", "")
+					log_frag = log_frag.replace('"', "")
+
+					# Detector de headers
+					if log_frag ==  "MASTER_PROGRAM":
+						header = "propietary_program"
+					elif log_frag == "NAME":
+						header = "name"
+					elif log_frag == "PROG_LANGUAGE":
+						header = "language"
+					elif log_frag ==  "REQUIRE":
+						header = "require"
+
+					DICT_LOGS_VALS[header] = HEADER_VALS
+					DICT_LOGS_VALS[header]["H_NAME"] = header
+				elif count == 2:
+					# Dato 2 / Valor
+					print(log[PREVIOUS:POINT], "de {} a {}:".format(PREVIOUS, POINT))
+					log_frag = log[PREVIOUS:POINT].replace("(", "")
+					log_frag = log_frag.replace(")", "")
+					log_frag = log_frag.replace(";", "")
+					log_frag = log_frag.replace('"', "")
+
+					print("*****", log_frag)
+					DICT_LOGS_VALS[header]["VALUE"] = log_frag
+				elif count == 3:
+					# Dato 3 / Privacidad
+					print(log[PREVIOUS:POINT], "de {} a {}:".format(PREVIOUS, POINT))
+					log_frag = log[PREVIOUS:POINT].replace("(", "")
+					log_frag = log_frag.replace(")", "")
+					log_frag = log_frag.replace(";", "")
+					log_frag = log_frag.replace('"', "")
+
+					DICT_LOGS_VALS[header]["PRIVACY"] = log_frag
+				elif count == 4:
+					# Reinicio de conteo
+					count = 0
+					header = ""
+
+
+				print("*** {}:{}".format(position, log_frag))
+				PREVIOUS = POINT
+
+		print(DICT_LOGS_VALS)
+
+		# Crea y llena el formato de las cabeceras
+		HEADER_LINES_LIST = []
+
+		for i in DICT_LOGS_VALS:
+			print()
+			name = DICT_LOGS_VALS[i]["H_NAME"]
+			val  = DICT_LOGS_VALS[i]["VALUE"]
+			priv = DICT_LOGS_VALS[i]["PRIVACY"]
+
+			line_format = str("#define {c}__ {a} = '{b}'\n".format(a = name, b = val[1:], c = priv[1:]))
+		
+			HEADER_LINES_LIST.append(line_format)
+
+		HEADERS_DATA_SEGMENT = """
+{A}
+""".format(A = str("".join(HEADER_LINES_LIST)))
+		print(HEADERS_DATA_SEGMENT)
+		print(BODY_DATA_SEGMENT)
+
+		string = "block: '" + blc_input + "' ; {"
+
+		BLOCK_DATA_SEGMENT = """
+{first}
+{body}
+{last}
+""".format(first = string, body = BODY_DATA_SEGMENT, last = "}")
+
+ 
+		FINAL_DLA = """
+{headers}
+{blocks}
+""".format(headers = HEADERS_DATA_SEGMENT, blocks = BLOCK_DATA_SEGMENT)
+		
+		print(FINAL_DLA)
+
+		# Creacion de DLA
+		file_write = open("DLA_ESCRITA_PRUEBA.dla", "w")
+		file_write.write(FINAL_DLA)
+		file_write.close()
+

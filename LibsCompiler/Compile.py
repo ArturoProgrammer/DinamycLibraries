@@ -127,7 +127,6 @@ def debug (dla_name, alerts = True):
 
 
 	f_open = open(dla_name, "r")
-	print("NOMBRE DE DLA:", dla_name)
 	read_action = f_open.readlines()
 
 	for actual_line in read_action:
@@ -353,8 +352,8 @@ def debug (dla_name, alerts = True):
 						if a == b:
 							tkns_index.append(expected_string.index(b))
 
-				for ind in tkns_index:
-					actual = ind
+				for index in tkns_index:
+					actual = index
 					expected = int(ind + 1)
 
 					try:
@@ -563,9 +562,7 @@ def run (lib_data):
 
 	# En caso de recibir una lista (ejecucion de bloque)
 	if isinstance(lib_data, list) == True:
-		print("**:", lib_data)
 		lib_name	= lib_data[0][0]
-		print("-->:",lib_name)
 		# Declaracion de lib_content
 		contents = []
 		for i in lib_data:

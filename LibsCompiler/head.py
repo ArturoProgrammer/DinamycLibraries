@@ -55,4 +55,4 @@ class headers():
 		# ejemplo:
 		# 	{ "privacy" : "private" , "libpart" : "part-1" }
 
-		pass
+		print(head_info)

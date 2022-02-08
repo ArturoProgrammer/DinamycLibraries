@@ -1,10 +1,10 @@
-escritura en python -> compilador -> .dla
+escritura en python (en formato .dlib) -> compilador -> .dla
 
 * arreglar GUI mensajes generales
 * terminar block_search()
 * resolver/hacer parser de identidades (tabs de segmentos de codigo)
 
-.dlib (texto plano) -> .dla (encriptado)
+.dlib (texto plano) -> .dla (encriptado listo para compilador)
 
 Estructura:
 
@@ -14,7 +14,7 @@ DinamycLibraries/
 		-> DLA.py
 			* read
 				* segment() ※
-				* block() 
+				* block() ※
 			* write
 				* block()
 				* segment()
@@ -61,3 +61,5 @@ Modificar en archivo Compile.py:
 	- approbed_list
 	- APPROBED_MAINHEADERS
 	- Proceso de comprobacion de existencia
+
+** HDLA son el enlace entre DLAs y sus funciones para uso del desarollador **

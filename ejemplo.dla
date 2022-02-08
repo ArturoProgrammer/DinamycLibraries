@@ -4,7 +4,7 @@
 #define public__ propietary_program = 'Programa de Prueba'
 
 // Se define el lenguaje de programacion que contiene la libreria
-#define private__ language = 'Python'
+#define private__ language = 'python'
 
 block: 'clase_prueba' ; {
 	@[referential : "YES"] (
