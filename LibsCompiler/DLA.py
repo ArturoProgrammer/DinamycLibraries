@@ -291,12 +291,96 @@ class Write (object):
 		file_action	= file_read.readlines()
 
 
+		# <=== INICIO DE SECCION COMPROBADORA DE EXISTENCIA ===> #
+		ESPEC_NAME		= str(dlatowrite[:-5] + ".dla")
+		EXISTENT_FLAG	= [False, False]	# P.1 -> Bloque / P.2 -> Segmento
+
+		# IDENTIFICADOR DE END's
+		# 1 --> Analizamos la existencia de la libreria ...
+		if os.path.exists(ESPEC_NAME):
+			file_read = open(ESPEC_NAME, "r")
+			file_action_dla = file_read.readlines()
+
+
+			# 2 --> Buscador existente de bloque...
+			DICT_BUFFER	= {}	# Diccionario buffer de las lineas a tratar
+			buff_count	= 0 	# Contador a utilizar en el buffer
+			BLOCK_MATCH = "block: '" + blc_input + "' ; {"
+			coords		= [0,0]	# Coordenadas en las que se encuentra el bloque a tratar
+
+
+			block_coords_list = []
+			for line in file_action_dla:
+				buff_count += 1
+				DICT_BUFFER[buff_count] = line
+				
+				match_percent = SequenceMatcher(None, BLOCK_MATCH, line[:-1]).ratio()
+				
+				if match_percent >= 1.0:
+					EXISTENT_FLAG[0] = True
+					coords[0] = buff_count
+					block_coords_list.append(buff_count)
+				
+				if EXISTENT_FLAG[0] == True and line == "}\n":
+					block_coords_list.append(buff_count)
+					coords[1] = buff_count
+
+			x = 0
+			y = 0
+
+			if EXISTENT_FLAG[0] != False:
+				coords[1] = block_coords_list[int(block_coords_list.index(coords[0])) + 1]
+				x = int(coords[0])
+				y = int(coords[1])
+
+
+			# 2.1 Una vez ubicadas las coordenadas del bloque se convierte dict -> list
+			BUFFER_BLOCK_LIST = []
+
+			for i in DICT_BUFFER:
+				BUFFER_BLOCK_LIST.append(DICT_BUFFER[i])
+
+			BLOCK_SELECTED_LINES = BUFFER_BLOCK_LIST[int(x - 1):int(y)]
+			#print(BLOCK_SELECTED_LINES)
+
+			buff_count = 0 	# Retornamos contador a 0...
+
+		
+			# 3 --> Buscador existente de segmento...
+			SEGMENT_MATCH = '@[referential : "' + ref_input + '"] ('
+
+			segment_coord_list = [0,0]
+
+			for i in range(x, y):
+				line = DICT_BUFFER[i]
+				match_percent = SequenceMatcher(None, SEGMENT_MATCH, DICT_BUFFER[i][1:-1]).ratio()
+
+				if match_percent >= 1.0:
+					EXISTENT_FLAG[1] = True
+					segment_coord_list[0] = i
+
+				if EXISTENT_FLAG[1] == True and line == "\t)\n":
+					segment_coord_list[1] = i
+
+		# <=== FIN DE SECCION COMPROBADORA DE EXISTENCIA ===> #
+
+			print("FLAGS:", EXISTENT_FLAG)
+			print("BLOQUE EN:", coords)
+			print("SEGMENTO EN:",segment_coord_list)
+
+			file_read.close()
+
+
 		# Extrae lineas de codigo
 		LIST_READY 				= []
 		LINES_DICT 				= {}
 		LINES_DICT["LOGS_LIST"] = []
 		counter 				= 0
 		PRE_LIST 				= []
+		LAST_END_LOCAT			= 0 	# Index del ultimo END
+
+
+		# <=== SECCION DE LOGS (HEADERS) P.1 ===> #
 
 		# Extrae los LOGS y registra las lineas
 		for line in file_action:
@@ -306,16 +390,17 @@ class Write (object):
 				counter += 1
 				LINES_DICT[counter] = line
 
+
+		# <=== SECCION DE SEGMENT ===> #
 		for line in LINES_DICT:
 			if line != "LOGS_LIST":
 				PRE_LIST.append(LINES_DICT[line])
 
 		for i in PRE_LIST:
 			val = i.replace("\t", "¶")
-			LIST_READY.append("\t\t" + val)
-		file_read.close()
-
-
+			LIST_READY.append("\t\t" + val)	# Datos a escribir
+		file_read.close()	# Se cierra hilo de lectura
+		
 		BODY_DATA_SEGMENT = """
 \t@[referential : "{AB}"] (
 \t\tBEGIN
@@ -323,9 +408,10 @@ class Write (object):
 \t\tEND
 \t)
 """.format(AB = ref_input, AC = "".join(LIST_READY))
+
 		
-		# # NOTE: Hacer ciclo for para escritura de LOGS
-		
+
+		# <=== SECCION DE LOGS (HEADERS) P.2 ===> #
 		"""
 		# LOGS PRINCIPALES:
 		# * MASTER_PROGRAM	-> propietary_program
@@ -349,7 +435,6 @@ class Write (object):
 
 			CONTROL_POINTS_DICT[log] = CONTROL_POINTS
 
-		
 
 		"""
 		for log in DICT_LOGS:
@@ -357,7 +442,6 @@ class Write (object):
 				print(log, index, ";", log[2:index])
 		"""
 
-		print("-->",CONTROL_POINTS_DICT)
 		for log in CONTROL_POINTS_DICT:
 			position	= 0
 			PREVIOUS	= 0
@@ -376,7 +460,6 @@ class Write (object):
 
 				if count == 1:
 					# Dato 1 / Nombre de cabecera
-					print(log[PREVIOUS:POINT], "de {} a {}:".format(PREVIOUS, POINT))
 					log_frag = log[PREVIOUS:POINT].replace("(", "")
 					log_frag = log_frag.replace(")", "")
 					log_frag = log_frag.replace(";", "")
@@ -396,17 +479,14 @@ class Write (object):
 					DICT_LOGS_VALS[header]["H_NAME"] = header
 				elif count == 2:
 					# Dato 2 / Valor
-					print(log[PREVIOUS:POINT], "de {} a {}:".format(PREVIOUS, POINT))
 					log_frag = log[PREVIOUS:POINT].replace("(", "")
 					log_frag = log_frag.replace(")", "")
 					log_frag = log_frag.replace(";", "")
 					log_frag = log_frag.replace('"', "")
 
-					print("*****", log_frag)
 					DICT_LOGS_VALS[header]["VALUE"] = log_frag
 				elif count == 3:
 					# Dato 3 / Privacidad
-					print(log[PREVIOUS:POINT], "de {} a {}:".format(PREVIOUS, POINT))
 					log_frag = log[PREVIOUS:POINT].replace("(", "")
 					log_frag = log_frag.replace(")", "")
 					log_frag = log_frag.replace(";", "")
@@ -419,16 +499,12 @@ class Write (object):
 					header = ""
 
 
-				print("*** {}:{}".format(position, log_frag))
 				PREVIOUS = POINT
-
-		print(DICT_LOGS_VALS)
 
 		# Crea y llena el formato de las cabeceras
 		HEADER_LINES_LIST = []
 
 		for i in DICT_LOGS_VALS:
-			print()
 			name = DICT_LOGS_VALS[i]["H_NAME"]
 			val  = DICT_LOGS_VALS[i]["VALUE"]
 			priv = DICT_LOGS_VALS[i]["PRIVACY"]
@@ -440,10 +516,11 @@ class Write (object):
 		HEADERS_DATA_SEGMENT = """
 {A}
 """.format(A = str("".join(HEADER_LINES_LIST)))
-		print(HEADERS_DATA_SEGMENT)
-		print(BODY_DATA_SEGMENT)
 
 		string = "block: '" + blc_input + "' ; {"
+
+
+		# <=== SECCION DE ENSAMBLE ===> #
 
 		BLOCK_DATA_SEGMENT = """
 {first}
@@ -451,16 +528,44 @@ class Write (object):
 {last}
 """.format(first = string, body = BODY_DATA_SEGMENT, last = "}")
 
- 
+
 		FINAL_DLA = """
 {headers}
 {blocks}
 """.format(headers = HEADERS_DATA_SEGMENT, blocks = BLOCK_DATA_SEGMENT)
-		
-		print(FINAL_DLA)
 
+
+		#####################################################
+		#													#
+		# TOMA DE DECISIONES FINALES 						#
+		# PARA DETERMINAR EL CASO DE AÑADIR O SOBRE ESRIBIR #
+		# UN SEGMENTO SE DEBE EVALUAR LA FLAG EXISTENT_FLAG #
+		#													#
+		#####################################################
+
+		print(LINES_DICT)
+		if EXISTENT_FLAG[0] == True:
+			# En caso de que exista el bloque...
+			# -> Buscar segmento...
+			if EXISTENT_FLAG[1] == True:
+				# En caso de que exista el segmento...
+				# -> Se sobreescribe segmento
+				pass
+			else:
+				# En caso de que no exista el segmento...
+				# -> Crear segmento debajo del ultimo segmento del bloque
+				pass
+		else:
+			# En caso de que no exista el bloque...
+			# -> Hacer bloque
+			# -> Hacer segmento
+			pass
+
+		#print(FINAL_DLA)
+
+		"""
 		# Creacion de DLA
-		file_write = open("DLA_ESCRITA_PRUEBA.dla", "w")
+		file_write = open(ESPEC_NAME, "w")
 		file_write.write(FINAL_DLA)
 		file_write.close()
-
+		"""

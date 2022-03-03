@@ -14,3 +14,5 @@ from LibsCompiler.head import headers as headers
 #LibsCompiler.Compile.run(code)
 
 LibsCompiler.DLA.Write("libreria de ejemplo.dlib", "clase_ejemplo", "HOLA")
+
+#LibsCompiler.DLA.Write("libreria de ejemplo.dlib", "clase_test", "SI")
