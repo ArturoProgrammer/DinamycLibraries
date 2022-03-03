@@ -13,6 +13,6 @@ from LibsCompiler.head import headers as headers
 #code = LibsCompiler.DLA.Read().block("ejemplo.dla", "clase_prueba", ORDER = ["SI", "YES", "PUEDE", "NO"])
 #LibsCompiler.Compile.run(code)
 
-LibsCompiler.DLA.Write("libreria de ejemplo.dlib", "clase_ejemplo", "HOLA")
+LibsCompiler.DLA.Write("libreria de ejemplo_dos.dlib", "class_ESTES", "POS")
 
 #LibsCompiler.DLA.Write("libreria de ejemplo.dlib", "clase_test", "SI")

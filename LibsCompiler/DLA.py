@@ -20,6 +20,13 @@ def textReplaceEncode (text):
 
 
 
+def saveFile (name, content, mode):
+	file_write = open(name, mode)
+	file_write.write(content)
+	file_write.close()
+
+
+
 class Read (object):
 	"""Lectura de Librerias DLA"""
 	# # NOTE: Funcion terminada
@@ -290,6 +297,8 @@ class Write (object):
 		file_read 	= open(dlatowrite, "r")
 		file_action	= file_read.readlines()
 
+		LIB_EXISTS = False
+
 
 		# <=== INICIO DE SECCION COMPROBADORA DE EXISTENCIA ===> #
 		ESPEC_NAME		= str(dlatowrite[:-5] + ".dla")
@@ -298,6 +307,7 @@ class Write (object):
 		# IDENTIFICADOR DE END's
 		# 1 --> Analizamos la existencia de la libreria ...
 		if os.path.exists(ESPEC_NAME):
+			LIB_EXISTS = True
 			file_read = open(ESPEC_NAME, "r")
 			file_action_dla = file_read.readlines()
 
@@ -364,9 +374,6 @@ class Write (object):
 
 		# <=== FIN DE SECCION COMPROBADORA DE EXISTENCIA ===> #
 
-			print("FLAGS:", EXISTENT_FLAG)
-			print("BLOQUE EN:", coords)
-			print("SEGMENTO EN:",segment_coord_list)
 
 			file_read.close()
 
@@ -543,29 +550,119 @@ class Write (object):
 		#													#
 		#####################################################
 
-		print(LINES_DICT)
-		if EXISTENT_FLAG[0] == True:
-			# En caso de que exista el bloque...
-			# -> Buscar segmento...
-			if EXISTENT_FLAG[1] == True:
-				# En caso de que exista el segmento...
-				# -> Se sobreescribe segmento
-				pass
+		if LIB_EXISTS == True:
+			if EXISTENT_FLAG[0] == True:
+				# En caso de que exista el bloque...
+				# -> Buscar segmento...
+				if EXISTENT_FLAG[1] == True:
+					# # NOTE: SOBREESCRITURA DE SEGMENTO LISTA
+					# <===> NO MODIFICAR <===> #
+
+					# En caso de que exista el segmento...
+					# -> Se sobreescribe segmento
+					#print("EL SEGMENTO SI EXISTE")
+					#print("Se reescribiran las lineas:", segment_coord_list, "que corresponden al referencial:", ref_input)
+
+					last_replace_start	= int(segment_coord_list[1]) + 1
+					last_replace_end	= len(DICT_BUFFER)
+
+
+					for i in range(segment_coord_list[0], segment_coord_list[1] + 1):
+						DICT_BUFFER.pop(i)
+
+					first_replace_start = int(segment_coord_list[0])
+					#print(first_replace_start)
+					#print(BODY_DATA_SEGMENT)
+
+					old_beg_list = []
+					old_end_list = []
+
+
+					# Se asignan valores de old_beg_list
+					for i in range(1, first_replace_start):
+						line = DICT_BUFFER[i]
+						old_beg_list.append(line)
+
+
+					# Se asignan valores de olg_end_list
+					for i in range(last_replace_start, int(last_replace_end) + 1):
+						line = DICT_BUFFER[i]
+						old_end_list.append(line)
+
+					old_beg = str("".join(old_beg_list))
+					old_end = str("".join(old_end_list))
+
+					NEW_DATA_SEGMENT = """
+{OLD_BEGIN}
+{NEW}
+{OLD_END}
+""".format(OLD_BEGIN = old_beg[:-1], NEW = BODY_DATA_SEGMENT[1:-1], OLD_END = old_end)
+					FINAL_DLA = NEW_DATA_SEGMENT[1:-1]
+					#print(FINAL_DLA)
+					#print("**************************GRABANDO**************************")
+					saveFile(ESPEC_NAME, FINAL_DLA, "w")
+
+				else:
+					# # NOTE: ADICION DE SEGMENTO EN BLOQUE EXISTENTE LISTO
+					# <===> NO MODIFICAR <===> #
+
+					# En caso de que no exista el segmento...
+					# -> Crear segmento debajo del ultimo segmento del bloque
+					print("NO EXISTE EL SEGMENTO {} EN EL BLOQUE {}".format(ref_input, blc_input))
+
+					
+					insert_start_index = int(block_coords_list[1] - 1)
+					insert_finish_index = int(block_coords_list[-1])
+
+					old_beg_list = []
+					old_end_list = []
+
+					for i in range(1, insert_start_index):
+						line = DICT_BUFFER[i]
+						old_beg_list.append(line)
+
+					for i in range(insert_start_index, int(insert_finish_index) + 1):
+						line = DICT_BUFFER[i]
+						old_end_list.append(line)
+
+
+					old_beg = str("".join(old_beg_list))
+					old_end = str("".join(old_end_list))
+
+					NEW_DATA_SEGMENT = """
+{OLD_BEGIN}
+{NEW}
+{OLD_END}
+""".format(OLD_BEGIN = old_beg, NEW = BODY_DATA_SEGMENT, OLD_END = old_end)
+				FINAL_DLA = NEW_DATA_SEGMENT[1:-1]
+				#print(FINAL_DLA)
+				saveFile(ESPEC_NAME, FINAL_DLA, "w")
+
 			else:
-				# En caso de que no exista el segmento...
-				# -> Crear segmento debajo del ultimo segmento del bloque
-				pass
+				# # NOTE: ADICION DE BLOQUE Y SEGMENTO NO EXISTENTES LISTO
+				# <===> NO MODIFICAR <===> #
+
+				# En caso de que no exista el bloque...
+				# -> Hacer bloque
+				# -> Hacer segmento
+				#print("NO EXISTE EL BLOQUE")
+
+				FINAL_DLA = BLOCK_DATA_SEGMENT[:]
+				saveFile(ESPEC_NAME, FINAL_DLA, "a")
+
 		else:
-			# En caso de que no exista el bloque...
-			# -> Hacer bloque
-			# -> Hacer segmento
-			pass
+			# Si la libreria no existe...
+			# # NOTE: CREACION DE DLA LISTA 
+			# <===> NO MODIFICAR <===> #
+
+			# -> Crea la libreria
+			# -> Inyecta headers
+			# -> Crea bloque
+			# -> Crea segmento
+			#print("NO EXISTE LA LIBRERIA")
+
+			# Creacion de DLA
+			saveFile(ESPEC_NAME, FINAL_DLA[2:-1], "w")
+
 
 		#print(FINAL_DLA)
-
-		"""
-		# Creacion de DLA
-		file_write = open(ESPEC_NAME, "w")
-		file_write.write(FINAL_DLA)
-		file_write.close()
-		"""
