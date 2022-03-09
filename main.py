@@ -10,9 +10,9 @@ from LibsCompiler.head import headers as headers
 #file_encoder.init()
 
 #code = LibsCompiler.DLA.Read().segment("DLA_ESCRITA_PRUEBA.dla", "clase_ejemplo", "HOLA")
-#code = LibsCompiler.DLA.Read().block("ejemplo.dla", "clase_prueba", ORDER = ["SI", "YES", "PUEDE", "NO"])
+
+LibsCompiler.DLA.Write("libreria de ejemplo_dos.dlib", "class_ESTE", "SI")
+
+#code = LibsCompiler.DLA.Read().segment("libreria de ejemplo_dos.dla", "class_ESTE", "SI")
 #LibsCompiler.Compile.run(code)
-
-LibsCompiler.DLA.Write("libreria de ejemplo_dos.dlib", "class_ESTES", "POS")
-
 #LibsCompiler.DLA.Write("libreria de ejemplo.dlib", "clase_test", "SI")

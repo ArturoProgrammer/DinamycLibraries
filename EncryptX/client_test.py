@@ -4,7 +4,7 @@
 
 from N4Lib import encripNFour
 import key_generator
-import DBmanipulate
+#import DBmanipulate
 import cleaner
 
 f_io = open("ejemplo.txt", "r")	# EN ESTE CASO ENCRIPTAREMOS EL CONTENIDO DE UN ARCHIVO
@@ -44,11 +44,11 @@ print("\nLLAVE PUBLICA: {}".format(pubkey))
 print("LONGITUD DE LLAVE PUBLICA: {}".format(len(pubkey)))
 
 decodeval = encripNFour.decode(encrip_msg, encripNFour.validation_key(pubkey))
-print("\nMENSAJE DESENCRIPTADO: {}".format(decodeval))
+print("\nMENSAJE DESENCRIPTADO: \n{}".format(decodeval))
 
 encripNFour.update(encrip_msg, x)
 key_generator.update(x, key_generator.gen_privkey(64))
 
 cleaner.clean()
 
-print("LA LLAVE ASOCIADA ES: {}".format(DBmanipulate.DB().getKey()))
+#print("LA LLAVE ASOCIADA ES: {}".format(DBmanipulate.DB().getKey()))

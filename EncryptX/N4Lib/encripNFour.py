@@ -235,7 +235,7 @@ def decode (message, keystatus):
 		"9" : "o", "g" : "p", "3" : "q", "l" : "r",  "a" : "s", "8" : "t", "j" : "u", "b" : "v",
 		"1" : "w", "0" : "x", "m" : "y", "i" : "z", "w" : "1", "c" : "2", "q" : "3", "k" : "4",
 		"5" : "5", "h" : "6", "e" : "7", "t" : "8", "o" : "9", "x" : "0", "\n" : "\n", "\t" : "\t",
-		"¶" : " " }
+		"¶" : " ", "Â" : "¶" }
 
 		#print(message)
 		index_counter = 0	# Contador del indice del mensaje
@@ -311,7 +311,7 @@ def encode (message, keystatus):
 		"o" : "9", "p" : "g", "q" : "3", "r" : "l",  "s" : "a", "t" : "8", "u" : "j", "v" : "b",
 		"w" : "1", "x" : "0", "y" : "m", "z" : "i", "1" : "w", "2" : "c", "3" : "q", "4" : "k",
 		"5" : "5", "6" : "h", "7" : "e", "8" : "t", "9" : "o", "0" : "x", "\n" : "æn", "\t" : "æt",
-		" " : "¶" }
+		" " : "¶", "¶" : "Â" }
 
 		for i in message:
 			chars.append(i)
@@ -319,10 +319,16 @@ def encode (message, keystatus):
 
 		for i in chars:
 			if i.islower() == True:
+				# Si la letra es minuscula
 				#print("{} Es minuscula".format(i))
 				OBJ_CHAR = "£{}".format(CHARDIC[i])
 				enc_chars.append(OBJ_CHAR)
-			elif i.isupper() == True:
+			elif i == "Â":
+				#print("{} CARACTER DE TAB EN DLA".format(i))
+				OBJ_CHAR = "+Â"
+				# QUE NO SE ALTERE NADA
+			elif i.isupper() == True and i != "Â":
+				# Si la letra es mayuscula
 				#print("{} Es mayuscula".format(i))
 				OBJ_CHAR = "±{}".format(CHARDIC[i.lower()])
 				enc_chars.append(OBJ_CHAR)
@@ -352,6 +358,7 @@ def encode (message, keystatus):
 		final_message = str("".join(enc_chars))
 
 		return final_message
+
 def module_help ():
 	print("encode() 	   | Funcion -> {}".format(encode.__doc__))
 	print("decode() 	   | Funcion -> {}".format(decode.__doc__))

@@ -20,10 +20,21 @@ def textReplaceEncode (text):
 
 
 
+
 def saveFile (name, content, mode):
+	# <==== AÑADIR FUNCION DE ESTRUCTURACION ====> #
+	"""
+	import client_test as file_module
+	content_ready = file_module.line_to_structure(content)
+	"""
+	content_ready = content
+
+	#print(content_ready)
+
 	file_write = open(name, mode)
-	file_write.write(content)
+	file_write.write(content_ready)
 	file_write.close()
+
 
 
 
@@ -38,7 +49,29 @@ class Read (object):
 		# block			= bloque en que se encuentra el codigo
 		# referential	= referential del codigo
 
-		filetoread = dlatoread
+		# <==== SECCION CATEGORIA 1 ====> #
+		# SE CREA CACHE DE SOLO LECTURA
+		import client_test as file_module
+		f_act = open(dlatoread, "r", encoding="utf8")
+
+		dt = ""
+		for i in f_act.readlines():
+			#print(i[:-1])
+			dt = dt + i
+		x = str("".join(dt))
+		listo = file_module.structure_to_line(x)
+		print(listo)
+		f_act.close()
+		name_lib_cache = str(dlatoread[:-4] + ".cache")
+		print(name_lib_cache)
+
+		cache_intermediario = open(name_lib_cache, "w", encoding="utf8")
+		cache_intermediario.write(listo)
+		cache_intermediario.close()
+
+		filetoread = name_lib_cache	# Jumper intermediario
+
+
 
 		tab_valor		= "¶"	# VALOR AL QUE ES EQUIVALENTE UN TAB
 		id_locations 	= []	# GUARDA LAS COORDENADAS DEL CODIGO A USAR
@@ -195,7 +228,7 @@ class Read (object):
 
 			# Retorna una tupla con valores
 			# ( NOMBRE DE LA LIBRERIA , CODIGO DEL SEGMENTO A EJECUTAR )
-			return dlatoread, final_value
+			return filetoread, final_value
 
 
 	# # NOTE: Funcion aparentemente terminada
@@ -293,6 +326,9 @@ class Write (object):
 	# # NOTE: Funcion en proceso
 	# ---> ESCRIBE LA DLA APARTIR DE UN DLIB (script)
 	def __init__ (self, dlatowrite, blc_input, ref_input):
+		# SE CREA PRIMERO ARCHIVO DE CACHE PARA LECTURA
+
+
 		# Apertura de .dlib para lectura
 		file_read 	= open(dlatowrite, "r")
 		file_action	= file_read.readlines()
@@ -601,6 +637,7 @@ class Write (object):
 					#print(FINAL_DLA)
 					#print("**************************GRABANDO**************************")
 					saveFile(ESPEC_NAME, FINAL_DLA, "w")
+					print("AQUI 1")
 
 				else:
 					# # NOTE: ADICION DE SEGMENTO EN BLOQUE EXISTENTE LISTO
@@ -637,6 +674,7 @@ class Write (object):
 				FINAL_DLA = NEW_DATA_SEGMENT[1:-1]
 				#print(FINAL_DLA)
 				saveFile(ESPEC_NAME, FINAL_DLA, "w")
+				print("AQUI 2")
 
 			else:
 				# # NOTE: ADICION DE BLOQUE Y SEGMENTO NO EXISTENTES LISTO
@@ -649,6 +687,7 @@ class Write (object):
 
 				FINAL_DLA = BLOCK_DATA_SEGMENT[:]
 				saveFile(ESPEC_NAME, FINAL_DLA, "a")
+				print("AQUI 3")
 
 		else:
 			# Si la libreria no existe...
@@ -663,6 +702,14 @@ class Write (object):
 
 			# Creacion de DLA
 			saveFile(ESPEC_NAME, FINAL_DLA[2:-1], "w")
+			print("AQUI 4")
 
+		# GUARDADO CON ENCRIPTACION ESTRUCTURADA
+		import client_test as file_module
+		X = file_module.line_to_structure(ESPEC_NAME)
 
-		#print(FINAL_DLA)
+		file_ready_to_save = open(ESPEC_NAME, "w", encoding="utf8")
+		file_ready_to_save.write(X)
+		file_ready_to_save.close()
+
+		print(X)

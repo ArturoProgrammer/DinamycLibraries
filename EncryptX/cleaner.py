@@ -1,5 +1,5 @@
 import os
-import trash
+from EncryptX import trash
 
 def clean():
 	_path = ".master/.access/dkcache/"

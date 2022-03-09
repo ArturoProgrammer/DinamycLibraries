@@ -68,7 +68,7 @@ def _Aleador (intv, b64v, strv, binv):
 
 # Funcion terminada
 def gen_privkey (length):
-	print("*** EN PROCESO DE CREACION***")
+	print("*** EN PROCESO DE CREACION ***")
 
 	times = int(length / 64)
 	print(times)
@@ -106,7 +106,7 @@ def gen_publickey(keyval):
 def savedbKey (key, hash):
 	"""
 	Guarda la llave y su hash asociado en la BD
-	
+
 	Argumentos:
 	Key [Str]
 	HASH [Str]
@@ -118,7 +118,7 @@ def savedbKey (key, hash):
 
 	if hash != None:
 		directory = ".master/.access/dkcache/"
-		
+
 		if os.path.exists(directory):
 			os.chdir(directory)
 
@@ -134,13 +134,13 @@ def savedbKey (key, hash):
 			os.chdir(actual_dir)
 		else:
 			"""Crea los directorios faltantes"""
-			root_1 = ".master/" 
+			root_1 = ".master/"
 			root_2 = ".access/"
 			root_3 = "dkcache/"
 
 			os.mkdir(root_1)
 			os.chdir(root_1)
-			os.mkdir(root_2) 
+			os.mkdir(root_2)
 			os.chdir(root_2)
 			os.mkdir(root_3)
 			os.chdir(root_3)
@@ -151,7 +151,7 @@ def savedbKey (key, hash):
 
 			dbfile.write(DIC_LINE)
 			dbfile.close()
-			
+
 			EncryptX.trash.garbageCollector('file:Xkeydb0.xrk')
 			EncryptX.trash.synchronizer(msg_db = "Xmsgdb1.xrk", key_db = "Xkeydb0.xrk")
 
@@ -180,7 +180,7 @@ def update (hash, newkey):
 				if line.find(_hash) != -1:
 					OBJ_KEY = line[0:int(len(_hash) + 5 )]
 					OBJ_LINE = "{a} --> {b}\n".format(a = _hash, b = newkey)
-					
+
 					oldkey = line[int(len(_hash) + 5):-1]
 
 					existent_lines.append(OBJ_LINE)
@@ -197,7 +197,6 @@ def update (hash, newkey):
 			_db.close()	# Se cierra el enlace nuevamente tras concluir la re-escritura
 
 
-			import EncryptX.trash
 			EncryptX.trash.garbageCollector('file:Xkeydb0.xrk')
 			EncryptX.trash.synchronizer(msg_db = "Xmsgdb1.xrk", key_db = "Xkeydb0.xrk")
 
