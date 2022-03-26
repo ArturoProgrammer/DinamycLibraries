@@ -9,10 +9,16 @@ from LibsCompiler.head import headers as headers
 # En Linux no causa conflicto la libreria NX
 #file_encoder.init()
 
-#code = LibsCompiler.DLA.Read().segment("DLA_ESCRITA_PRUEBA.dla", "clase_ejemplo", "HOLA")
+code = LibsCompiler.DLA.Read().segment("saved.dla", "class_ESTES", "POS")
 
-LibsCompiler.DLA.Write("libreria de ejemplo_dos.dlib", "class_ESTE", "SI")
+#LibsCompiler.DLA.Write("libreria de ejemplo_dos.dlib", "class_ESTE", "SI")
 
-#code = LibsCompiler.DLA.Read().segment("libreria de ejemplo_dos.dla", "class_ESTE", "SI")
-#LibsCompiler.Compile.run(code)
-#LibsCompiler.DLA.Write("libreria de ejemplo.dlib", "clase_test", "SI")
+# -> # LibsCompiler.DLA.Write("libreria de ejemplo_dos.dlib", "class_prueba", "NUEVADOS")
+
+#code = LibsCompiler.DLA.Read().block("saved.dla", "class_TESTES")
+
+print(code)
+LibsCompiler.Compile.run(code)
+LibsCompiler.DLA.delete_cache()
+
+#LibsCompiler.DLA.deconstruct("saved.dla")

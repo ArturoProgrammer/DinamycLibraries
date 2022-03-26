@@ -13,6 +13,53 @@ import LibsCompiler.head
 # # NOTE: IMPLEMENTAR EL SISTEMA DE ENCRIPTACION N-X
 
 
+def deconstruct (dla):
+	#REHABILITAR AL REPARAR ESTRUCTURACION EN WRITE
+	import client_test as file_module
+
+	try:
+		f_act = open(dla, "r", encoding="utf8")
+	except UnicodeDecodeError as e:
+		pass
+	else:
+		f_act = open(dla, "r", encoding="utf8")
+
+	dt = ""
+	for i in f_act.readlines():
+		#print(i[:-1])
+		dt = dt + i
+	x = str("".join(dt))
+	listo = file_module.structure_to_line(x)
+
+	print("//////\n", listo, "\n//////")
+	
+	f_act.close()
+	name_lib_cache = str(dla[:-4] + ".cache")
+
+	cache_intermediario = open(name_lib_cache, "w", encoding="utf8")
+	cache_intermediario.write(listo)
+	cache_intermediario.close()
+
+	CACHE_DLA_NAME = name_lib_cache
+
+	return CACHE_DLA_NAME
+
+
+
+def delete_cache ():
+	# Elimina todos los archivos de cache
+	import glob
+
+	py_files = glob.glob('*.cache')
+
+	for py_file in py_files:
+	    try:
+	        os.remove(py_file)
+	    except OSError as e:
+	        print(f"Error:{ e.strerror}")
+
+
+
 def textReplaceEncode (text):
 	string = str(text)
 	text_replace = string.replace("\t", "¶")
@@ -50,29 +97,20 @@ class Read (object):
 		# referential	= referential del codigo
 
 		# <==== SECCION CATEGORIA 1 ====> #
-		# SE CREA CACHE DE SOLO LECTURA
-		import client_test as file_module
-		f_act = open(dlatoread, "r", encoding="utf8")
+		# SE CREA CACHE DE SOLO LECTURA EN FORMATO DECONSTRUIDO
+		if dlatoread[-4:] == ".dla":
+			print(dlatoread, dlatoread[:-4])
+			filetoread = deconstruct(dlatoread)
+		elif dlatoread[-6:] == ".cache":
+			print(dlatoread, dlatoread[:-6])
+			print("YA EXISTE UN CACHE")
+		else:
+			print("EXTENSION DESCONOCIDA")
 
-		dt = ""
-		for i in f_act.readlines():
-			#print(i[:-1])
-			dt = dt + i
-		x = str("".join(dt))
-		listo = file_module.structure_to_line(x)
-		print(listo)
-		f_act.close()
-		name_lib_cache = str(dlatoread[:-4] + ".cache")
-		print(name_lib_cache)
+		print("CON SEGMENTO")
+		print(filetoread)
 
-		cache_intermediario = open(name_lib_cache, "w", encoding="utf8")
-		cache_intermediario.write(listo)
-		cache_intermediario.close()
-
-		filetoread = name_lib_cache	# Jumper intermediario
-
-
-
+		
 		tab_valor		= "¶"	# VALOR AL QUE ES EQUIVALENTE UN TAB
 		id_locations 	= []	# GUARDA LAS COORDENADAS DEL CODIGO A USAR
 		text_lines 		= {}	# ALMACENA EL CODIGO CORRESPONDIENTE A CADA LINEA DEL ARCHIVO
@@ -81,6 +119,7 @@ class Read (object):
 
 		if os.path.exists(filetoread):
 			fileaction = open(filetoread, "r")
+			print(fileaction.read())
 
 			# ---> SE EJECUTA EL COMPILADOR ANTES QUE NADA
 			if LibsCompiler.Compile.debug(filetoread, alerts=False) == False:
@@ -116,7 +155,6 @@ class Read (object):
 
 				num_lines += 1
 				text_lines[num_lines] = wactual_line # ALMACENAJE DE LINEAS EN EL DICCIONARIO
-
 
 				"""
 				# ---> BUSCA EL BLOQUE A LEER
@@ -171,6 +209,9 @@ class Read (object):
 			x = 0
 			y = 0
 			# COMENZAR EL PROCESO DE LECTURA Y ALMACENADO DEL SEGMENTO DE CODIGO
+			
+			print("******LISTA******", text_lines)
+
 			if text_lines[z+1] == "BEGIN\n":
 				#print("ES CORRECTOOOOO")
 				x = z+1
@@ -228,7 +269,9 @@ class Read (object):
 
 			# Retorna una tupla con valores
 			# ( NOMBRE DE LA LIBRERIA , CODIGO DEL SEGMENTO A EJECUTAR )
+
 			return filetoread, final_value
+
 
 
 	# # NOTE: Funcion aparentemente terminada
@@ -240,13 +283,19 @@ class Read (object):
 		ALL_REF_LIST	= []			# Todos los referenciales del bloque
 		ALL_SEGM_LIST	= []			# Lista con todo el codigo de los segmentos a ejecutar
 
+
+		filetoread = deconstruct(dlatoread)
+		print("***************" + filetoread)
+
 		# ---> SE EJECUTA EL COMPILADOR ANTES QUE NADA
 		if LibsCompiler.Compile.debug(filetoread, alerts=True) == False:
 			pass
 		else:
 			# En caso de NO existir un orden de ejecucion ...
 			if ORDER == []:
-				file_action = open(filetoread, "r")
+				file_action = open(filetoread, "r", encoding="utf8")
+				print("SIN ORDEN")
+				print(filetoread)
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
@@ -285,7 +334,8 @@ class Read (object):
 
 			# En caso de existir un orden de ejecucion ...
 			elif ORDER != []:
-				file_action = open(filetoread, "r")
+				file_action = open(filetoread, "r", encoding="utf8")
+				print("CON ORDEN")
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
@@ -321,6 +371,7 @@ class Read (object):
 
 
 
+
 class Write (object):
 	"""Escritura de DLA; .dlib -> .dla"""
 	# # NOTE: Funcion en proceso
@@ -344,9 +395,17 @@ class Write (object):
 		# 1 --> Analizamos la existencia de la libreria ...
 		if os.path.exists(ESPEC_NAME):
 			LIB_EXISTS = True
+		
+			"""	
+			# INSERTAR AQUI EL PROCESO DE INTERCAMBIO DE EXTENSIONES #
+			from CACHE_MAKER import interchanger
+			interchanger(ESPEC_NAME)
+			"""
+
 			file_read = open(ESPEC_NAME, "r")
 			file_action_dla = file_read.readlines()
 
+			print("".join(file_action_dla))
 
 			# 2 --> Buscador existente de bloque...
 			DICT_BUFFER	= {}	# Diccionario buffer de las lineas a tratar
@@ -704,6 +763,7 @@ class Write (object):
 			saveFile(ESPEC_NAME, FINAL_DLA[2:-1], "w")
 			print("AQUI 4")
 
+"""
 		# GUARDADO CON ENCRIPTACION ESTRUCTURADA
 		import client_test as file_module
 		X = file_module.line_to_structure(ESPEC_NAME)
@@ -713,3 +773,4 @@ class Write (object):
 		file_ready_to_save.close()
 
 		print(X)
+"""
