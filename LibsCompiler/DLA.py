@@ -30,8 +30,6 @@ def deconstruct (dla):
 		dt = dt + i
 	x = str("".join(dt))
 	listo = file_module.structure_to_line(x)
-
-	print("//////\n", listo, "\n//////")
 	
 	f_act.close()
 	name_lib_cache = str(dla[:-4] + ".cache")
@@ -98,17 +96,13 @@ class Read (object):
 
 		# <==== SECCION CATEGORIA 1 ====> #
 		# SE CREA CACHE DE SOLO LECTURA EN FORMATO DECONSTRUIDO
+		filetoread = ""
 		if dlatoread[-4:] == ".dla":
-			print(dlatoread, dlatoread[:-4])
 			filetoread = deconstruct(dlatoread)
 		elif dlatoread[-6:] == ".cache":
-			print(dlatoread, dlatoread[:-6])
-			print("YA EXISTE UN CACHE")
+			filetoread = dlatoread
 		else:
-			print("EXTENSION DESCONOCIDA")
-
-		print("CON SEGMENTO")
-		print(filetoread)
+			deploy("EXTENSION DESCONOCIDA")
 
 		
 		tab_valor		= "¶"	# VALOR AL QUE ES EQUIVALENTE UN TAB
@@ -119,7 +113,6 @@ class Read (object):
 
 		if os.path.exists(filetoread):
 			fileaction = open(filetoread, "r")
-			print(fileaction.read())
 
 			# ---> SE EJECUTA EL COMPILADOR ANTES QUE NADA
 			if LibsCompiler.Compile.debug(filetoread, alerts=False) == False:
@@ -174,7 +167,6 @@ class Read (object):
 				SEGMENT_REFERENTIAL_MATCH = '@[referential : ""] ('
 				match_percent = SequenceMatcher(None, SEGMENT_REFERENTIAL_MATCH, wactual_line).ratio()
 
-
 				if match_percent >= 0.5:
 					#print("HEMOS ENCONTRADO UN REFERENCIAL")
 					if wactual_line[:1] == "@":
@@ -209,9 +201,9 @@ class Read (object):
 			x = 0
 			y = 0
 			# COMENZAR EL PROCESO DE LECTURA Y ALMACENADO DEL SEGMENTO DE CODIGO
-			
-			print("******LISTA******", text_lines)
 
+
+			# # NOTE: NO REGISTRA LA COORDENADA Z, POR LO QUE NO PUEDE DEFINIR A: X & Y
 			if text_lines[z+1] == "BEGIN\n":
 				#print("ES CORRECTOOOOO")
 				x = z+1
@@ -285,7 +277,6 @@ class Read (object):
 
 
 		filetoread = deconstruct(dlatoread)
-		print("***************" + filetoread)
 
 		# ---> SE EJECUTA EL COMPILADOR ANTES QUE NADA
 		if LibsCompiler.Compile.debug(filetoread, alerts=True) == False:
@@ -294,8 +285,7 @@ class Read (object):
 			# En caso de NO existir un orden de ejecucion ...
 			if ORDER == []:
 				file_action = open(filetoread, "r", encoding="utf8")
-				print("SIN ORDEN")
-				print(filetoread)
+				print("SIN ORDEN DE EJECUCION DE SEGMENTOS")
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
@@ -329,13 +319,14 @@ class Read (object):
 					sc_tuple = self.segment(filetoread, block, referentials)
 					ALL_SEGM_LIST.append(sc_tuple)
 
+
 				return ALL_SEGM_LIST
 
 
 			# En caso de existir un orden de ejecucion ...
 			elif ORDER != []:
 				file_action = open(filetoread, "r", encoding="utf8")
-				print("CON ORDEN")
+				print("CON ORDEN DE EJECUCION DE SEGMENTOS")
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
