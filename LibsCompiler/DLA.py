@@ -8,6 +8,7 @@ from difflib import SequenceMatcher
 from LibsCompiler.SystemAlerts import deploy
 import LibsCompiler.Compile
 import LibsCompiler.head
+from CACHE_MAKER import saveFileStructured
 
 # # NOTE: PERFECCIONAR QUE AUTOMATICAMENTE SE CAMBIEN LOS TABS POR '¶'
 # # NOTE: IMPLEMENTAR EL SISTEMA DE ENCRIPTACION N-X
@@ -22,7 +23,7 @@ def deconstruct (dla):
 	except UnicodeDecodeError as e:
 		pass
 	else:
-		f_act = open(dla, "r", encoding="utf8")
+		f_act = open(dla, "r")
 
 	dt = ""
 	for i in f_act.readlines():
@@ -64,14 +65,9 @@ def textReplaceEncode (text):
 	return text_replace
 
 
-
-
 def saveFile (name, content, mode):
 	# <==== AÑADIR FUNCION DE ESTRUCTURACION ====> #
-	"""
-	import client_test as file_module
-	content_ready = file_module.line_to_structure(content)
-	"""
+
 	content_ready = content
 
 	#print(content_ready)
@@ -81,11 +77,9 @@ def saveFile (name, content, mode):
 	file_write.close()
 
 
-
-
 class Read (object):
 	"""Lectura de Librerias DLA"""
-	# # NOTE: Funcion terminada
+	# # NOTE: Funcion terminada / Actualizada a Lectura Estructurada
 	# ---> LEE Y EJECUTA UN SEGMENTO DE CODIGO
 	def segment (self, dlatoread, block, referential):
 		#print("SE UBICA CON EXITO")
@@ -266,7 +260,7 @@ class Read (object):
 
 
 
-	# # NOTE: Funcion aparentemente terminada
+	# # NOTE: Funcion aparentemente terminada / Actualizada a Lectura Estructurada
 	# ---> LEE Y EJECUTA TODOS LOS SEGMENTOS DE UN BLOQUE SECUENCIALMENTE O EN ORDEN ESPECIFICO
 	def block (self, dlatoread, block, ORDER = []):
 		# ***** En caso de no existir un orden de ejecucion *****
@@ -387,11 +381,11 @@ class Write (object):
 		if os.path.exists(ESPEC_NAME):
 			LIB_EXISTS = True
 		
-			"""	
+
 			# INSERTAR AQUI EL PROCESO DE INTERCAMBIO DE EXTENSIONES #
 			from CACHE_MAKER import interchanger
 			interchanger(ESPEC_NAME)
-			"""
+
 
 			file_read = open(ESPEC_NAME, "r")
 			file_action_dla = file_read.readlines()
@@ -502,8 +496,6 @@ class Write (object):
 \t)
 """.format(AB = ref_input, AC = "".join(LIST_READY))
 
-		
-
 		# <=== SECCION DE LOGS (HEADERS) P.2 ===> #
 		"""
 		# LOGS PRINCIPALES:
@@ -534,6 +526,13 @@ class Write (object):
 			for index in CONTROL_POINTS:
 				print(log, index, ";", log[2:index])
 		"""
+
+		#####################################################
+		#													#
+		# PARA AGREGAR MAS CABECERAS A ANALIZAR, SE DEBE	#
+		# MODIFICAR ESTA PARTE DE CODIGO					#
+		#													#
+		#####################################################
 
 		for log in CONTROL_POINTS_DICT:
 			position	= 0
@@ -620,6 +619,7 @@ class Write (object):
 {body}
 {last}
 """.format(first = string, body = BODY_DATA_SEGMENT, last = "}")
+		
 
 
 		FINAL_DLA = """
@@ -754,8 +754,9 @@ class Write (object):
 			saveFile(ESPEC_NAME, FINAL_DLA[2:-1], "w")
 			print("AQUI 4")
 
-"""
 		# GUARDADO CON ENCRIPTACION ESTRUCTURADA
+		saveFileStructured(ESPEC_NAME, FINAL_DLA, "w")
+"""
 		import client_test as file_module
 		X = file_module.line_to_structure(ESPEC_NAME)
 

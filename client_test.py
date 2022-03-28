@@ -106,6 +106,9 @@ def line_to_structure (FILE):
     #print(structure)
     return structure
 
+
+
+
 #====================================================================================================#
 #====================================================================================================#
 #====================================================================================================#
@@ -232,7 +235,6 @@ save_file.close()
 """
 
 # ESTRUCTURADO -> 1L
-#print(structure)
 def structure_to_line (msg):
     # msg -> mensaje estructurado a desestructurar y decodificar
     on_line = []

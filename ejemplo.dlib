@@ -1,0 +1,6 @@
+=> $("MASTER_PROGRAM"; "ExternOS"; "public")
+=> $("REQUIRE"; "python3"; "private")
+=> $("NAME"; "PRUEBA DE DLA"; "public")
+=> $("PROG_LANGUAGE"; "python"; "private")
+
+print("Sigo sin creer que esto si funciona")
