@@ -1,6 +1,6 @@
 def interchanger (dla):
 	# SOBRE ESCRIBE LA DLA DE ARCHIVO ESTRUCTURADO A TEXTO PLANO
-	print("LA LIBRERIA " + dla + " SI EXISTE")
+	#print("LA LIBRERIA " + dla + " SI EXISTE")
 	
 	import client_test as file_module
 
@@ -21,7 +21,7 @@ def interchanger (dla):
 
 	f_act.close()
 
-	print("\n{a} \n////////////////////////////\n{b}\n".format(a = x, b = listo))
+	#print("\n{a} \n////////////////////////////\n{b}\n".format(a = x, b = listo))
 	NAME_LIB_CACHE = dla
 	#print(name_lib_cache)
 
@@ -40,7 +40,7 @@ def saveFileStructured (name, content, mode):
 	import client_test as file_module
 	content_ready = file_module.line_to_structure(name)
 
-	print(content_ready)
+	#print(content_ready)
 	file_write = open(name, mode)
 	file_write.write(content_ready)
 	file_write.close()

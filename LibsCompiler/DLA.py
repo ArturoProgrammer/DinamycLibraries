@@ -65,6 +65,7 @@ def textReplaceEncode (text):
 	return text_replace
 
 
+
 def saveFile (name, content, mode):
 	# <==== AÑADIR FUNCION DE ESTRUCTURACION ====> #
 
@@ -75,6 +76,7 @@ def saveFile (name, content, mode):
 	file_write = open(name, mode)
 	file_write.write(content_ready)
 	file_write.close()
+
 
 
 class Read (object):
@@ -390,7 +392,7 @@ class Write (object):
 			file_read = open(ESPEC_NAME, "r")
 			file_action_dla = file_read.readlines()
 
-			print("".join(file_action_dla))
+			#print("".join(file_action_dla))
 
 			# 2 --> Buscador existente de bloque...
 			DICT_BUFFER	= {}	# Diccionario buffer de las lineas a tratar

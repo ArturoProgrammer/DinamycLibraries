@@ -14,7 +14,7 @@ def line_to_structure (FILE):
     # ESTRUCTURA UN MNENSAJE DE LINEA
     # FILE -> archivo a estructurar y codificar
 
-    print(FILE)
+    #print(FILE)
     # SE GENERAN LAS LLAVES CORRESPONDIENTES
     key_password = key_generator.gen_privkey(64)
     pubkey = key_generator.gen_publickey(key_password)
@@ -261,7 +261,7 @@ def structure_to_line (msg):
 #print("LA LLAVE ASOCIADA ES: {}".format(DBmanipulate.DB().getKey()))
 
 if __name__ == "__main__":
-    print("ejecutand")
+    print("ejecutando")
     lib = open("data_to_structure.cache", "r", encoding="utf8")
 
     datos = ""

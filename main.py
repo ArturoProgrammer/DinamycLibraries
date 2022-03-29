@@ -12,12 +12,12 @@ from LibsCompiler.head import headers as headers
 
 #LibsCompiler.DLA.Write("saved.dlib", "class_ESTESSSS", "YESSS")
 
-LibsCompiler.DLA.Write("ejemplo.dlib", "clase_prueba", "NO")
-code = LibsCompiler.DLA.Read().segment("ejemplo.dla", "clase_prueba", "NO")
+LibsCompiler.DLA.Write("ejemplo.dlib", "class_prueba", "NO")
+code = LibsCompiler.DLA.Read().segment("ejemplo.dla", "class_prueba", "NO")
 
-#code = LibsCompiler.DLA.Read().block("saved.dla", "class_TESTES", ORDER = ["POS", "POST"])
+code = LibsCompiler.DLA.Read().block("ejemplo.dla", "class_prueba", ORDER = ["NO", "YES"])
 
-print(code)
+#print(code)
 LibsCompiler.Compile.run(code)
 LibsCompiler.DLA.delete_cache()
 

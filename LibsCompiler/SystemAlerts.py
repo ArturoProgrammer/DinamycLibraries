@@ -31,7 +31,7 @@ def __vbs_mode (m_dict):
 
 
     script_code = "".join(message_data)
-    print(script_code)
+    #print(script_code)
 
     error_file = open("messagebox.vbs", "w")
     error_file.write('x = MsgBox({}, 16, "Error de compilacion")'.format(script_code))

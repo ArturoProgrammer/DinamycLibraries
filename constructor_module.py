@@ -6,7 +6,7 @@ file = open("data_to_structure.cache", "r+")
 BUFFER = []
 
 for i in file.readlines():
-    print(i)
+    #print(i)
     counter = 0
     before  = 0
     after   = 2
@@ -15,7 +15,7 @@ for i in file.readlines():
         counter += 1
 
         if counter == 2:
-            print(i[before:after])
+            #print(i[before:after])
             after += 2
 
 file.close()
