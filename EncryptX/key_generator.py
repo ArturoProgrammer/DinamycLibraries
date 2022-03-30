@@ -68,10 +68,10 @@ def _Aleador (intv, b64v, strv, binv):
 
 # Funcion terminada
 def gen_privkey (length):
-	print("*** EN PROCESO DE CREACION ***")
+	#print("*** EN PROCESO DE CREACION ***")
 
 	times = int(length / 64)
-	print(times)
+	#print(times)
 
 	for i in range(0, times):
 		#cvi = int(cv)
@@ -207,7 +207,8 @@ def update (hash, newkey):
 			os.chdir(actual_dir)
 
 			if oldkey != newkey:
-				print("*-= THE OLD KEY HAS BEEN REPLACED BY {b} =-*".format(b = str(newkey)[:int(len(newkey)/4)]))
+				#print("*-= THE OLD KEY HAS BEEN REPLACED BY {b} =-*".format(b = str(newkey)[:int(len(newkey)/4)]))
+				pass
 
 
 # Funcion terminada

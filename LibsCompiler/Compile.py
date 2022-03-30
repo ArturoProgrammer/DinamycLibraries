@@ -460,7 +460,7 @@ def debug (dla_name, alerts = True):
 		else:
 			RETURN_ERROR = []
 
-			part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = i)
+			part_one = "En la linea {l_n} del archivo {file}:".format(file = dla_name, l_n = hi)
 			part_two = "\t {line}".format(line = "Headers")
 			part_three = "*** {error}: {text} '{arg}'".format(arg = hi, error = "HeaderMissing", text = ERRORS_LIST["HeaderMissing"])
 

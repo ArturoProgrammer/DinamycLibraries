@@ -8,9 +8,55 @@ from difflib import SequenceMatcher
 from LibsCompiler.SystemAlerts import deploy
 import LibsCompiler.Compile
 import LibsCompiler.head
+from CACHE_MAKER import saveFileStructured
 
 # # NOTE: PERFECCIONAR QUE AUTOMATICAMENTE SE CAMBIEN LOS TABS POR '¶'
 # # NOTE: IMPLEMENTAR EL SISTEMA DE ENCRIPTACION N-X
+
+
+def deconstruct (dla):
+	#REHABILITAR AL REPARAR ESTRUCTURACION EN WRITE
+	import client_test as file_module
+
+	try:
+		f_act = open(dla, "r", encoding="utf8")
+	except UnicodeDecodeError as e:
+		pass
+	else:
+		f_act = open(dla, "r")
+
+	dt = ""
+	for i in f_act.readlines():
+		#print(i[:-1])
+		dt = dt + i
+	x = str("".join(dt))
+	listo = file_module.structure_to_line(x)
+	
+	f_act.close()
+	name_lib_cache = str(dla[:-4] + ".cache")
+
+	cache_intermediario = open(name_lib_cache, "w", encoding="utf8")
+	cache_intermediario.write(listo)
+	cache_intermediario.close()
+
+	CACHE_DLA_NAME = name_lib_cache
+
+	return CACHE_DLA_NAME
+
+
+
+def delete_cache ():
+	# Elimina todos los archivos de cache
+	import glob
+
+	py_files = glob.glob('*.cache')
+
+	for py_file in py_files:
+	    try:
+	        os.remove(py_file)
+	    except OSError as e:
+	        print(f"Error:{ e.strerror}")
+
 
 
 def textReplaceEncode (text):
@@ -20,13 +66,9 @@ def textReplaceEncode (text):
 
 
 
-
 def saveFile (name, content, mode):
 	# <==== AÑADIR FUNCION DE ESTRUCTURACION ====> #
-	"""
-	import client_test as file_module
-	content_ready = file_module.line_to_structure(content)
-	"""
+
 	content_ready = content
 
 	#print(content_ready)
@@ -37,10 +79,9 @@ def saveFile (name, content, mode):
 
 
 
-
 class Read (object):
 	"""Lectura de Librerias DLA"""
-	# # NOTE: Funcion terminada
+	# # NOTE: Funcion terminada / Actualizada a Lectura Estructurada
 	# ---> LEE Y EJECUTA UN SEGMENTO DE CODIGO
 	def segment (self, dlatoread, block, referential):
 		#print("SE UBICA CON EXITO")
@@ -50,29 +91,16 @@ class Read (object):
 		# referential	= referential del codigo
 
 		# <==== SECCION CATEGORIA 1 ====> #
-		# SE CREA CACHE DE SOLO LECTURA
-		import client_test as file_module
-		f_act = open(dlatoread, "r", encoding="utf8")
+		# SE CREA CACHE DE SOLO LECTURA EN FORMATO DECONSTRUIDO
+		filetoread = ""
+		if dlatoread[-4:] == ".dla":
+			filetoread = deconstruct(dlatoread)
+		elif dlatoread[-6:] == ".cache":
+			filetoread = dlatoread
+		else:
+			deploy("EXTENSION DESCONOCIDA")
 
-		dt = ""
-		for i in f_act.readlines():
-			#print(i[:-1])
-			dt = dt + i
-		x = str("".join(dt))
-		listo = file_module.structure_to_line(x)
-		print(listo)
-		f_act.close()
-		name_lib_cache = str(dlatoread[:-4] + ".cache")
-		print(name_lib_cache)
-
-		cache_intermediario = open(name_lib_cache, "w", encoding="utf8")
-		cache_intermediario.write(listo)
-		cache_intermediario.close()
-
-		filetoread = name_lib_cache	# Jumper intermediario
-
-
-
+		
 		tab_valor		= "¶"	# VALOR AL QUE ES EQUIVALENTE UN TAB
 		id_locations 	= []	# GUARDA LAS COORDENADAS DEL CODIGO A USAR
 		text_lines 		= {}	# ALMACENA EL CODIGO CORRESPONDIENTE A CADA LINEA DEL ARCHIVO
@@ -117,7 +145,6 @@ class Read (object):
 				num_lines += 1
 				text_lines[num_lines] = wactual_line # ALMACENAJE DE LINEAS EN EL DICCIONARIO
 
-
 				"""
 				# ---> BUSCA EL BLOQUE A LEER
 				if wactual_line[:6] == "block:":
@@ -135,7 +162,6 @@ class Read (object):
 				# ---> BUSCA EL SEGMENTO (REFERENCIAL) A LEER
 				SEGMENT_REFERENTIAL_MATCH = '@[referential : ""] ('
 				match_percent = SequenceMatcher(None, SEGMENT_REFERENTIAL_MATCH, wactual_line).ratio()
-
 
 				if match_percent >= 0.5:
 					#print("HEMOS ENCONTRADO UN REFERENCIAL")
@@ -171,6 +197,9 @@ class Read (object):
 			x = 0
 			y = 0
 			# COMENZAR EL PROCESO DE LECTURA Y ALMACENADO DEL SEGMENTO DE CODIGO
+
+
+			# # NOTE: NO REGISTRA LA COORDENADA Z, POR LO QUE NO PUEDE DEFINIR A: X & Y
 			if text_lines[z+1] == "BEGIN\n":
 				#print("ES CORRECTOOOOO")
 				x = z+1
@@ -228,10 +257,12 @@ class Read (object):
 
 			# Retorna una tupla con valores
 			# ( NOMBRE DE LA LIBRERIA , CODIGO DEL SEGMENTO A EJECUTAR )
+
 			return filetoread, final_value
 
 
-	# # NOTE: Funcion aparentemente terminada
+
+	# # NOTE: Funcion aparentemente terminada / Actualizada a Lectura Estructurada
 	# ---> LEE Y EJECUTA TODOS LOS SEGMENTOS DE UN BLOQUE SECUENCIALMENTE O EN ORDEN ESPECIFICO
 	def block (self, dlatoread, block, ORDER = []):
 		# ***** En caso de no existir un orden de ejecucion *****
@@ -240,13 +271,17 @@ class Read (object):
 		ALL_REF_LIST	= []			# Todos los referenciales del bloque
 		ALL_SEGM_LIST	= []			# Lista con todo el codigo de los segmentos a ejecutar
 
+
+		filetoread = deconstruct(dlatoread)
+
 		# ---> SE EJECUTA EL COMPILADOR ANTES QUE NADA
 		if LibsCompiler.Compile.debug(filetoread, alerts=True) == False:
 			pass
 		else:
 			# En caso de NO existir un orden de ejecucion ...
 			if ORDER == []:
-				file_action = open(filetoread, "r")
+				file_action = open(filetoread, "r", encoding="utf8")
+				print("SIN ORDEN DE EJECUCION DE SEGMENTOS")
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
@@ -280,12 +315,14 @@ class Read (object):
 					sc_tuple = self.segment(filetoread, block, referentials)
 					ALL_SEGM_LIST.append(sc_tuple)
 
+
 				return ALL_SEGM_LIST
 
 
 			# En caso de existir un orden de ejecucion ...
 			elif ORDER != []:
-				file_action = open(filetoread, "r")
+				file_action = open(filetoread, "r", encoding="utf8")
+				print("CON ORDEN DE EJECUCION DE SEGMENTOS")
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
@@ -321,6 +358,7 @@ class Read (object):
 
 
 
+
 class Write (object):
 	"""Escritura de DLA; .dlib -> .dla"""
 	# # NOTE: Funcion en proceso
@@ -344,9 +382,17 @@ class Write (object):
 		# 1 --> Analizamos la existencia de la libreria ...
 		if os.path.exists(ESPEC_NAME):
 			LIB_EXISTS = True
+		
+
+			# INSERTAR AQUI EL PROCESO DE INTERCAMBIO DE EXTENSIONES #
+			from CACHE_MAKER import interchanger
+			interchanger(ESPEC_NAME)
+
+
 			file_read = open(ESPEC_NAME, "r")
 			file_action_dla = file_read.readlines()
 
+			#print("".join(file_action_dla))
 
 			# 2 --> Buscador existente de bloque...
 			DICT_BUFFER	= {}	# Diccionario buffer de las lineas a tratar
@@ -452,8 +498,6 @@ class Write (object):
 \t)
 """.format(AB = ref_input, AC = "".join(LIST_READY))
 
-		
-
 		# <=== SECCION DE LOGS (HEADERS) P.2 ===> #
 		"""
 		# LOGS PRINCIPALES:
@@ -484,6 +528,13 @@ class Write (object):
 			for index in CONTROL_POINTS:
 				print(log, index, ";", log[2:index])
 		"""
+
+		#####################################################
+		#													#
+		# PARA AGREGAR MAS CABECERAS A ANALIZAR, SE DEBE	#
+		# MODIFICAR ESTA PARTE DE CODIGO					#
+		#													#
+		#####################################################
 
 		for log in CONTROL_POINTS_DICT:
 			position	= 0
@@ -570,6 +621,7 @@ class Write (object):
 {body}
 {last}
 """.format(first = string, body = BODY_DATA_SEGMENT, last = "}")
+		
 
 
 		FINAL_DLA = """
@@ -705,6 +757,8 @@ class Write (object):
 			print("AQUI 4")
 
 		# GUARDADO CON ENCRIPTACION ESTRUCTURADA
+		saveFileStructured(ESPEC_NAME, FINAL_DLA, "w")
+"""
 		import client_test as file_module
 		X = file_module.line_to_structure(ESPEC_NAME)
 
@@ -713,3 +767,4 @@ class Write (object):
 		file_ready_to_save.close()
 
 		print(X)
+"""

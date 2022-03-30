@@ -14,7 +14,7 @@ def line_to_structure (FILE):
     # ESTRUCTURA UN MNENSAJE DE LINEA
     # FILE -> archivo a estructurar y codificar
 
-    print(FILE)
+    #print(FILE)
     # SE GENERAN LAS LLAVES CORRESPONDIENTES
     key_password = key_generator.gen_privkey(64)
     pubkey = key_generator.gen_publickey(key_password)
@@ -105,6 +105,9 @@ def line_to_structure (FILE):
     structure = "".join(line)
     #print(structure)
     return structure
+
+
+
 
 #====================================================================================================#
 #====================================================================================================#
@@ -232,7 +235,6 @@ save_file.close()
 """
 
 # ESTRUCTURADO -> 1L
-#print(structure)
 def structure_to_line (msg):
     # msg -> mensaje estructurado a desestructurar y decodificar
     on_line = []
@@ -259,7 +261,7 @@ def structure_to_line (msg):
 #print("LA LLAVE ASOCIADA ES: {}".format(DBmanipulate.DB().getKey()))
 
 if __name__ == "__main__":
-    print("ejecutand")
+    print("ejecutando")
     lib = open("data_to_structure.cache", "r", encoding="utf8")
 
     datos = ""

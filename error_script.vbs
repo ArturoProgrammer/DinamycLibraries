@@ -1,1 +1,0 @@
-x = MsgBox(" EN LINEA 9 EN ARCHIVO ejemplo.dla:" & vbNewLine & "	block: 'clase_prueba'  { " & vbNewLine & "*** TokenAbsent: HACE FALTA EL TOKEN ';'", 16, "Error de compilacion")

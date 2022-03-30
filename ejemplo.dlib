@@ -3,8 +3,4 @@
 => $("NAME"; "PRUEBA DE DLA"; "public")
 => $("PROG_LANGUAGE"; "python"; "private")
 
-# Script de ejemplo para programar una libreria que posteriormente se generara en .dla
-
-# WOW! creo que esto ya funciona
-
 print("Sigo sin creer que esto si funciona")
