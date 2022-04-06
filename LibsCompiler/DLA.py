@@ -689,7 +689,7 @@ class Write (object):
 					#print(FINAL_DLA)
 					#print("**************************GRABANDO**************************")
 					saveFile(ESPEC_NAME, FINAL_DLA, "w")
-					print("AQUI 1")
+					#print("AQUI 1")
 
 				else:
 					# # NOTE: ADICION DE SEGMENTO EN BLOQUE EXISTENTE LISTO
@@ -726,7 +726,7 @@ class Write (object):
 				FINAL_DLA = NEW_DATA_SEGMENT[1:-1]
 				#print(FINAL_DLA)
 				saveFile(ESPEC_NAME, FINAL_DLA, "w")
-				print("AQUI 2")
+				#print("AQUI 2")
 
 			else:
 				# # NOTE: ADICION DE BLOQUE Y SEGMENTO NO EXISTENTES LISTO
@@ -739,7 +739,7 @@ class Write (object):
 
 				FINAL_DLA = BLOCK_DATA_SEGMENT[:]
 				saveFile(ESPEC_NAME, FINAL_DLA, "a")
-				print("AQUI 3")
+				#print("AQUI 3")
 
 		else:
 			# Si la libreria no existe...
@@ -754,7 +754,7 @@ class Write (object):
 
 			# Creacion de DLA
 			saveFile(ESPEC_NAME, FINAL_DLA[2:-1], "w")
-			print("AQUI 4")
+			#print("AQUI 4")
 
 		# GUARDADO CON ENCRIPTACION ESTRUCTURADA
 		saveFileStructured(ESPEC_NAME, FINAL_DLA, "w")

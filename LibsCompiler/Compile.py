@@ -229,7 +229,7 @@ def debug (dla_name, alerts = True):
 				APPROBED_MAINHEADERS["name"] = True
 			if dead_string[2] == "language":
 				APPROBED_MAINHEADERS["language"] = True
-			# Analizador del 4to aargumento (simbolo de asignacion "=")
+			# Analizador del 4to argumento (simbolo de asignacion "=")
 			if dead_string[3] != "=":
 				RETURN_ERROR = []
 
