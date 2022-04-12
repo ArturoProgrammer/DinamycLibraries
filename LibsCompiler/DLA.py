@@ -281,7 +281,7 @@ class Read (object):
 			# En caso de NO existir un orden de ejecucion ...
 			if ORDER == []:
 				file_action = open(filetoread, "r", encoding="utf8")
-				print("SIN ORDEN DE EJECUCION DE SEGMENTOS")
+				#print("SIN ORDEN DE EJECUCION DE SEGMENTOS")
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
@@ -322,7 +322,7 @@ class Read (object):
 			# En caso de existir un orden de ejecucion ...
 			elif ORDER != []:
 				file_action = open(filetoread, "r", encoding="utf8")
-				print("CON ORDEN DE EJECUCION DE SEGMENTOS")
+				#print("CON ORDEN DE EJECUCION DE SEGMENTOS")
 
 				# LOCALIZADOR DE BLOQUE
 				DICT_LINES = {}
@@ -363,7 +363,7 @@ class Write (object):
 	"""Escritura de DLA; .dlib -> .dla"""
 	# # NOTE: Funcion en proceso
 	# ---> ESCRIBE LA DLA APARTIR DE UN DLIB (script)
-	def __init__ (self, dlatowrite, blc_input, ref_input):
+	def __init__ (self, dlatowrite, blc_input, ref_input, CONSTRUCT = True):
 		# SE CREA PRIMERO ARCHIVO DE CACHE PARA LECTURA
 
 
@@ -598,13 +598,11 @@ class Write (object):
 		# Crea y llena el formato de las cabeceras
 		HEADER_LINES_LIST = []
 
+		# PRUEBA DE IMPLEMENTACION 
 		for i in DICT_LOGS_VALS:
-			name = DICT_LOGS_VALS[i]["H_NAME"]
-			val  = DICT_LOGS_VALS[i]["VALUE"]
-			priv = DICT_LOGS_VALS[i]["PRIVACY"]
+			HEADER_TO_MAKE = DICT_LOGS_VALS[i]
 
-			line_format = str("#define {c}__ {a} = '{b}'\n".format(a = name, b = val[1:], c = priv[1:]))
-		
+			line_format = LibsCompiler.head.headers.set(HEADER_TO_MAKE)
 			HEADER_LINES_LIST.append(line_format)
 
 		HEADERS_DATA_SEGMENT = """
@@ -637,6 +635,10 @@ class Write (object):
 		# UN SEGMENTO SE DEBE EVALUAR LA FLAG EXISTENT_FLAG #
 		#													#
 		#####################################################
+
+		# # BUG: FALTA AÑADIR ACTUALIZACION DE ESCRITURA DE HEADERS AUTOMATICA
+		# POSIBLE SOLUCION: AÑADIR PROCESO DE ACTUALIZACION DE HEADERS ANTES DE ACTUALIZACION
+		# DEL CUERPO DE LIBRERIA
 
 		if LIB_EXISTS == True:
 			if EXISTENT_FLAG[0] == True:
@@ -756,15 +758,11 @@ class Write (object):
 			saveFile(ESPEC_NAME, FINAL_DLA[2:-1], "w")
 			#print("AQUI 4")
 
-		# GUARDADO CON ENCRIPTACION ESTRUCTURADA
-		saveFileStructured(ESPEC_NAME, FINAL_DLA, "w")
-"""
-		import client_test as file_module
-		X = file_module.line_to_structure(ESPEC_NAME)
-
-		file_ready_to_save = open(ESPEC_NAME, "w", encoding="utf8")
-		file_ready_to_save.write(X)
-		file_ready_to_save.close()
-
-		print(X)
-"""
+		# El parametro construct nos indica si queremos estructurar o no la libreria
+		# Valor por defecto: True
+		if CONSTRUCT == True:
+			# GUARDADO CON ENCRIPTACION ESTRUCTURADA
+			saveFileStructured(ESPEC_NAME, FINAL_DLA, "w")
+		elif CONSTRUCT == False:
+			# # TODO...
+			pass

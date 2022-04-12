@@ -1,0 +1,53 @@
+/* ESTRCUTURA EJEMPLAR DEL REGISTRO DE LIBRO MAYOR */
+/* EL REGISTRO MAYOR PERMITE EL ENLACE DINAMICO */
+
+
+/* LIBRERIAS REGISTRADAS EN CADA */
+"registered_libraries" : {
+	"LIBRERIA DE PRUEBA" : {
+		"file" : "ejemplo.dla",
+		"path" : "D:\Documentos\Proyectos\DinamycLibraries",
+		"author" : "Adare Systems",
+		"LID" : "52902083-88820010-91604259-19457720"
+	},
+	"LIBRERIA DE PRUEBA 2" : {
+		"file" : "saved.dla",
+		"path" : "D:\Documentos\Proyectos\DinamycLibraries",
+		"author" : "Adare Systems",
+		"LID" : "68602824-57934230-72122492-22686347"
+	},
+	"FUNCTIONS SYSTEM LIBS" : {
+		"file" : "amtdlib.dla",
+		"path" : "D:\Documentos\Proyectos\DinamycLibraries",
+		"author" : "Adare Systems",
+		"LID" : "90060260-79652764-42656272-48567400"
+	},
+}
+
+"LID_linker" : {
+	
+}
+
+/* BLOQUES Y FUNCIONES REGISTRADAS EN CADA LIBRERIA */
+"registered_functions" : {
+	"LIBRERIA DE PRUEBA" : {
+		"class_prueba1" : [
+			"SEGMENTO1",
+			"SEGMENTO2"
+		],
+		"class_prueba2" : [
+			"SEGMENTO1",
+			"SEGMENTO2"
+		]
+	},
+	"LIBRERIA DE PRUEBA 2" : {
+		"class_prueba1" : [
+			"SEGMENTO1",
+			"SEGMENTO2"
+		],
+		"class_prueba2" : [
+			"SEGMENTO1",
+			"SEGMENTO2"
+		]
+	}
+}

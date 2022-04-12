@@ -554,6 +554,12 @@ def run (lib_data):
 	lib_name	=	""	# Nombre del archivo de la DLA
 	lib_content	=	""	# Codigo a ejecutar
 
+	# LISTA CON LOS LENGUAJES SOPORTADOS
+	# # NOTE: Los lenguajes se escriben con el mismo nombre que se registran en los headers
+	SUPORTTED_LANGUAGES = [
+		"python"
+	]
+
 	# En caso de recibir una tupla (ejecucion de segmento)
 	if isinstance(lib_data, tuple) == True:
 		lib_name	= lib_data[0]
@@ -570,7 +576,9 @@ def run (lib_data):
 			contents.append(str("".join(code)))
 		lib_content = contents	# Todos los segmendos de codigo del bloques
 
-	program_lib = headers.get(lib_name, "propietary_program")	# Programa "Dueño" de la libreria
+	program_lib	= headers.get(lib_name, "propietary_program")	# Programa "Dueño" de la libreria
+	lang_lib 	= headers.get(lib_name, "language", forced = True)	# Lenguaje en la que esta escrita la libreria
+	
 	return_dir = os.getcwd()
 
 	root_1	= ".cache/"
@@ -592,17 +600,24 @@ def run (lib_data):
 
 	# Ejecucion
 	if debug(lib_name) == True:
-		deploy("Debug exitoso")
+		deploy("==== Debug exitoso!! ====")
 
-		# Se extrae el nombre del programa propietario de los headers
-		__dir_existent(program_lib)
-		code = str("".join(lib_content)).replace("¶", "\t")
+		if lang_lib in SUPORTTED_LANGUAGES:
+			# En caso de ser un lenguaje soportado por el sistema...
+			if lang_lib == "python":
+				# En caso de ejecutar python...
 
-		code_cache_file = open("fCodeCache.py", "w")
-		code_cache_file.write(code)
-		code_cache_file.close()
+				# Se extrae el nombre del programa propietario de los headers
+				__dir_existent(program_lib)
+				code = str("".join(lib_content)).replace("¶", "\t")
 
-		import subprocess
-		subprocess.call(["python", "fCodeCache.py"])
+				code_cache_file = open("fCodeCache.py", "w")
+				code_cache_file.write(code)
+				code_cache_file.close()
 
-		os.chdir(return_dir)
+				import subprocess
+				subprocess.call(["python", "fCodeCache.py"])
+
+				os.chdir(return_dir)
+		else:
+			deploy(f"W!: El lenguaje {lang_lib} de la libreria no es soportado por el sistema", mode = "windowed")

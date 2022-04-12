@@ -1,10 +1,11 @@
 escritura en python (en formato .dlib) -> compilador -> .dla
 
-* arreglar GUI mensajes generales
-* terminar block_search()
-* resolver/hacer parser de identidades (tabs de segmentos de codigo)
+* Continuar trabajo de funcion construct opcional
+* Registro de fallas
+* Garbage collector de archivos residuales viejos
+* Trabajar en funcion Tree (devuelve en forma de arbol los bloques y segmentos de una libreria)
 
-.dlib (texto plano) -> .dla (encriptado listo para compilador)
+.dlib (texto plano) -> .dla (estructurado listo para ejecutar)
 
 Estructura:
 
@@ -12,14 +13,15 @@ DinamycLibraries/
 	-> LibsCompiler/
 		-> __init__.py
 		-> DLA.py
+			* deconstruct() ※
+			* delete_cache() ※
+			* saveFile() ※
 			* read
 				* segment() ※
 				* block() ※
-			* write
-				* block()
-				* segment()
+			* write() ※
 			* headers
-				* set()
+				* set() ※
 				* get() ※
 		-> HDLA.py
 		-> Compile.py
@@ -27,6 +29,11 @@ DinamycLibraries/
 			* run()
 		-> SystemAlerts.py
 			* deploy() ※
+		-> client_test.py
+			* line_to_structure() ※
+			* structure_to_line() ※
+		-> prompt.py
+			* cin() ※
 		-> EncryptX/
 	-> __init__.py
 
@@ -56,10 +63,12 @@ Simbolos	(0010)
 1 byte de permiso		->	8 		bits
 512 bytes de mensaje 	->	4096	bits
 
-***COMO AÑADIR NUEVAS CABECERAS PRINCIPALES:
-Modificar en archivo Compile.py:
-	- approbed_list
-	- APPROBED_MAINHEADERS
-	- Proceso de comprobacion de existencia
+*** Añadir registro de libro mayor
+	- header name es el nombre de la libreria en el registro
+	- cada vez que una libreria se mueda de directorio se debe ejecutar el "registra" para
+	  actualizar los datos en el registro mayor
+
+*** Las DLA podran almacenar archivos de imagenes en forma de enlaces
+
 
 ** HDLA son el enlace entre DLAs y sus funciones para uso del desarollador **

@@ -8,8 +8,14 @@ class headers():
 	# * private__	Para cabeceras de acceso privado
 
 	# # NOTE: Funcion terminada
-	def get(dfile, head_t):
+	def get(dfile, head_t, forced=False):
 		"""Obtiene el header indicado"""
+
+		# Parametros:
+		# dfile		= Libreria
+		# head_t 	= Header a buscar
+		# forced	= Lectura forzada de header privado (terminar)
+
 		HEADER_VALUE	= ""
 		LINES_LIST		= []
 
@@ -43,16 +49,26 @@ class headers():
 			if dead_string[2] == head_t and dead_string[1] == "public__":
 				HEADER_VALUE = dead_string[4]
 				HEADER_VALUE = HEADER_VALUE[1:-1]
+			
+			elif dead_string[2] == head_t and dead_string[1] == "private__" and forced == False:
+				print("W!: El header al que desea acceder es privado")
+
+			elif dead_string[2] == head_t and dead_string[1] == "private__" and forced == True:
+				HEADER_VALUE = dead_string[4]
+				HEADER_VALUE = HEADER_VALUE[1:-1]
 
 		#print("VALOR DE HEADER:", HEADER_VALUE)
 		return HEADER_VALUE
 
 
-
+	# # NOTE: Funcion terminada
 	def set(head_info):
-		"""Graba los datos del header en un dla"""
-		# head_info	<- { privacy : priv , name : value }
-		# ejemplo:
-		# 	{ "privacy" : "private" , "libpart" : "part-1" }
+		"""Procesa los datos del header para generar linea de #define"""
+		for i in head_info:
+			name = head_info["H_NAME"]
+			val  = head_info["VALUE"]
+			priv = head_info["PRIVACY"]
 
-		print(head_info)
+			line_format = str("#define {c}__ {a} = '{b}'\n".format(a = name, b = val[1:], c = priv[1:]))
+
+			return line_format

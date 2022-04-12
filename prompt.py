@@ -38,7 +38,7 @@ def cin (command):
 
 	#####################################################################
 	#																	#
-	# PALABRAS CLAVE AÑADIDAS CON EXITO LISTAS PARA EJECUCION:			#
+	# PALABRAS CLAVE AÑADIDAS CON EXITO, LISTAS PARA EJECUCION:			#
 	# * READ 		/	LECTURA DE DLA									#
 	# * WRITE		/ 	ESCRITURA DE DLA								#
 	#																	#
@@ -59,7 +59,15 @@ def cin (command):
 			segment = COMMAND_STRIP["FLAGS"][0][9:-2]		# Bloque a trabajar
 			block = COMMAND_STRIP["FLAGS"][1][7:-1]			# Segmento a trabajar
 
-			LibsCompiler.DLA.Write(file, block, segment)
+			if "NO-CONSTRUCT" in COMMAND_STRIP["FLAGS"]:
+				# No se construye la libreria
+				print("no se construira libreria")
+				NOC_BOOL_VAL = False
+			else:
+				# Se construye la libreria
+				NOC_BOOL_VAL = True
+
+			LibsCompiler.DLA.Write(file, block, segment, CONSTRUCT = NOC_BOOL_VAL)
 
 
 	# En caso que se requiera devolver algun valor...
