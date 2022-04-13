@@ -1,0 +1,17 @@
+#define public__ propietary_program = 'ExternOS'
+#define private__ require = 'python3'
+#define public__ name = 'PRUEBA DE DLA'
+#define private__ language = 'python'
+
+
+
+block: 'class_prueba' ; {
+
+	@[referential : "PRUEBA2"] (
+		BEGIN
+		
+		print("Sigo sin creer que esto si funciona")
+		END
+	)
+
+}

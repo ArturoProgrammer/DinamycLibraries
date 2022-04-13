@@ -8,6 +8,15 @@ from difflib import SequenceMatcher
 def cin (command):
 	# Funcion para entrada de comandos
 
+	"""
+	# PRCOESO PARA AGREGAR UN NUEVO COMANDO
+	#
+	# * 1 : AGREGAR A KEYWORDS_LIST
+	# * 2 : PROGRAMAR EN CONDICION DE KEY_CHECK
+	# * 3 : REZARLE A DIOS QUE FUNCIONE
+	#
+	"""
+
 	# SE PROCESA LA LINEA DE COMANDO A EJECUTAR - PARSER
 	COMMAND_STRIP = {"MAIN_KEY" : "", "FLAGS" : []}
 
@@ -22,7 +31,7 @@ def cin (command):
 
 	# SE PROCESA LA INFORMACION PARSEADA
 	
-	KEYWORDS_LIST	= ["READ", "WRITE"]
+	KEYWORDS_LIST	= ["READ", "WRITE", "DECONSTRUCT", "TREE"]
 	KEY_CHECK		= False					# Flag - keyword existente
 	REVAL_DATA		= ""					# Datos a retornar
 
@@ -49,12 +58,28 @@ def cin (command):
 
 		if keyword_i == "READ":
 			# PROCESO PARA REALIZAR ESCRITURA DE DLA
+			"""
+			# BANDERAS PARA EL COMANDO:
+			# --SEGMENT
+			# --BLOCK
+			"""
+
+			# ========= AÑADIR EL ARG_CHECKER ========= #
+
 			file = str(list(COMMAND_STRIP["MAIN_KEY"].split())[1])[1:-1]
 			segment = COMMAND_STRIP["FLAGS"][0][9:-2]		# Bloque a trabajar
 			block = COMMAND_STRIP["FLAGS"][1][7:-1]			# Segmento a trabajar
 
 			REVAL_DATA = LibsCompiler.DLA.Read().segment(file, block, segment)
 		elif keyword_i == "WRITE":
+			# COMANDO PARA LA ESCRITURA DE UN DLA
+			"""
+			# BANDERAS PARA EL COMANDO:
+			# --SEGMENT
+			# --BLOCK
+			# --NO-CONSTRUCT
+			"""
+
 			file = str(list(COMMAND_STRIP["MAIN_KEY"].split())[1])[1:-1]
 			segment = COMMAND_STRIP["FLAGS"][0][9:-2]		# Bloque a trabajar
 			block = COMMAND_STRIP["FLAGS"][1][7:-1]			# Segmento a trabajar
@@ -68,6 +93,47 @@ def cin (command):
 				NOC_BOOL_VAL = True
 
 			LibsCompiler.DLA.Write(file, block, segment, CONSTRUCT = NOC_BOOL_VAL)
+		elif keyword_i == "DECONSTRUCT":
+			# COMANDO PARA DECONSTRUIR UNA LIBRERIA
+			"""
+			# BANDERAS PARA EL COMANDO:
+			# --LIB
+			"""
+
+			lib_tow = COMMAND_STRIP["FLAGS"][0][5:-1]
+			print("DECONSTRUYENDO LA LIBRERIA {}".format(lib_tow))
+
+			LibsCompiler.DLA.deconstruct(lib_tow, ext = ".txt")
+		elif keyword_i == "TREE":
+			# COMANDO PARA MOSTRAR EL ARBOL DE CONTENIDO DE UNA LIBRERIA
+			"""
+			# BANDERAS PARA EL COMANDO:
+			# --LIB
+			"""
+			lib_tow = COMMAND_STRIP["FLAGS"][0][5:-1]
+
+			# Deconstruimos la libreria para poder leer
+			decons_lib = LibsCompiler.DLA.deconstruct(lib_tow)
+
+			file = open(decons_lib, "r")
+
+			for i in file.readlines():
+				line = str(i[:-1])
+
+				BLOCK_REFERENTIAL_MATCH = "block: '' ; {"
+				match_percent = SequenceMatcher(None, BLOCK_REFERENTIAL_MATCH, line).ratio()
+				if match_percent >= 0.6:
+					print(" -- BLOCK: {}".format(line[8:-5]))
+
+
+				SEGMENT_REFERENTIAL_MATCH = '@[referential : ""] ('
+				match_percent = SequenceMatcher(None, SEGMENT_REFERENTIAL_MATCH, line).ratio()
+				if match_percent >= 0.5:
+					print(" ---- SEGMENT: {}".format(line[18:-4]))
+			file.close()
+
+			# Eliminamos residuos de cache
+			LibsCompiler.DLA.delete_cache()
 
 
 	# En caso que se requiera devolver algun valor...

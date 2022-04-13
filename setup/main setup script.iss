@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Dynamic Library System"
-#define MyAppVersion "v1.0"
+#define MyAppVersion "v1.0.1"
 #define MyAppPublisher "Adare Systems"
 #define MyAppURL "soporte.hermosillo@ferromex.mx"
 #define MyAppExeName "main.py"
@@ -35,16 +35,18 @@ DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=C:\Users\avenegas_e\Documents\Proyectos\DinamycLibraries\licencia.txt
-InfoBeforeFile=C:\Users\avenegas_e\Documents\Proyectos\DinamycLibraries\antes.txt
-InfoAfterFile=C:\Users\avenegas_e\Documents\Proyectos\DinamycLibraries\despues.txt
+LicenseFile=C:\Users\avenegas_e\Documents\Proyectos\DinamycLibraries\LICENSE
+
+;InfoBeforeFile=C:\Users\avenegas_e\Documents\Proyectos\DinamycLibraries\antes.txt
+;InfoAfterFile=C:\Users\avenegas_e\Documents\Proyectos\DinamycLibraries\despues.txt
+
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline
 OutputDir=C:\Users\avenegas_e\Documents\Proyectos\INSTALADORES COMPILADOS\DL Systems
 OutputBaseFilename=Setup
-Password=1234567890
-Encryption=yes
+;Password=1234567890
+Encryption=no
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

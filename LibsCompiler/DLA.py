@@ -14,7 +14,7 @@ from CACHE_MAKER import saveFileStructured
 # # NOTE: IMPLEMENTAR EL SISTEMA DE ENCRIPTACION N-X
 
 
-def deconstruct (dla):
+def deconstruct (dla, ext = ".cache"):
 	#REHABILITAR AL REPARAR ESTRUCTURACION EN WRITE
 	import client_test as file_module
 
@@ -33,7 +33,7 @@ def deconstruct (dla):
 	listo = file_module.structure_to_line(x)
 	
 	f_act.close()
-	name_lib_cache = str(dla[:-4] + ".cache")
+	name_lib_cache = str(dla[:-4] + ext)
 
 	cache_intermediario = open(name_lib_cache, "w", encoding="utf8")
 	cache_intermediario.write(listo)

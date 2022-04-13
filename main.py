@@ -22,11 +22,18 @@ code = LibsCompiler.DLA.Read().block("ejemplo.dla", "class_prueba", ORDER = ["NO
 #print(code)
 
 
+"""
 prompt.cin("WRITE 'ejemplo.dlib' --SEGMENT 'PRUEBA2' --BLOCK 'class_prueba'")
 
 code = prompt.cin("READ 'ejemplo.dla' --SEGMENT 'PRUEBA2' --BLOCK 'class_prueba'")
 
 LibsCompiler.Compile.run(code)
 LibsCompiler.DLA.delete_cache()
+"""
+
+prompt.cin("DECONSTRUCT --LIB 'ejemplo.dla'") #  === Comando listo ===
+
+prompt.cin("TREE --LIB 'ejemplo.dla'")
+
 
 #LibsCompiler.DLA.deconstruct("saved.dla")
