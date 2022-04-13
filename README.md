@@ -5,12 +5,12 @@
 A diferencia de las **DLL** que solamente fucionan en Windows, los archivos **DLA** son multiplataforma.
 
 ## Contenido
-2. [Novedades](#novedades)
-3. [Documentacion](#documentacion)
-1.1. [¿Que son?](#¿que-son?)
-1.2. [Funcionamiento](#metodo-de-funcionamiento)
-1.3. [Prompt y Comandos](#linea-de-comandos)
-1.4 [Licencia](#licencia)
+1. [Novedades](#novedades)
+2. [Documentacion](#documentacion)
+2.1. [¿Que son?](#¿Que-son?)
+2.2. [Funcionamiento](#metodo-de-funcionamiento)
+2.3. [Prompt y Comandos](#linea-de-comandos)
+3.4. [Licencia](#licencia)
 4. [Descarga](#descarga)
 5. [Instalacion](#instalacion)
 6. [Requiere](#requiere)
